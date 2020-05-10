@@ -58,7 +58,7 @@ LightmapSettings:
     m_Resolution: 2
     m_BakeResolution: 16
     m_AtlasSize: 1024
-    m_AO: 0
+    m_AO: 1
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
@@ -4246,11 +4246,11 @@ MonoBehaviour:
   volumetricShadowDimmer: 1
   shadowFadeDistance: 10000
   contactShadows: 1
-  viewBiasMin: 0.2
+  viewBiasMin: 0.18
   viewBiasMax: 100
-  viewBiasScale: 1
-  normalBiasMin: 0.5
-  normalBiasMax: 0.5
+  viewBiasScale: 0.81
+  normalBiasMin: 0.49
+  normalBiasMax: 0.49
   normalBiasScale: 1
   sampleBiasScale: 0
   edgeLeakFixup: 1
@@ -4359,7 +4359,7 @@ Light:
   m_ColorTemperature: 4672
   m_UseColorTemperature: 1
   m_ShadowRadius: 0
-  m_ShadowAngle: 0
+  m_ShadowAngle: 2.9
 --- !u!4 &1442962029
 Transform:
   m_ObjectHideFlags: 0
