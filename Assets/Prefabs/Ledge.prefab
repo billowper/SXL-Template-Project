@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 5972883289419053628}
   - component: {fileID: 5972883289419053629}
   m_Layer: 0
-  m_Name: GrindSpline
+  m_Name: GrindSpline_Concrete
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb3cc901b7f01d74489be9ef70a5506d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  GrindType: 0
+  IsRound: 0
 --- !u!1 &5972883289617339628
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,7 +183,7 @@ GameObject:
   - component: {fileID: 5972883289980203846}
   - component: {fileID: 5972883289980203847}
   m_Layer: 0
-  m_Name: GrindSpline
+  m_Name: GrindSpline_Concrete
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -216,7 +217,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb3cc901b7f01d74489be9ef70a5506d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  GrindType: 0
+  IsRound: 0
 --- !u!1 &5972883290035446758
 GameObject:
   m_ObjectHideFlags: 0

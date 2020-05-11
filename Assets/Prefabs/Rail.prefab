@@ -11679,7 +11679,7 @@ GameObject:
   - component: {fileID: 5385652297259567714}
   - component: {fileID: 5385652297259567713}
   m_Layer: 0
-  m_Name: GrindSplineRound
+  m_Name: GrindSpline_Metal_Round
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11713,7 +11713,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb3cc901b7f01d74489be9ef70a5506d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  GrindType: 1
+  IsRound: 1
 --- !u!1 &5385652297430534685
 GameObject:
   m_ObjectHideFlags: 0

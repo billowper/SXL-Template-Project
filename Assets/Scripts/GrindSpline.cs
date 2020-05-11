@@ -1,12 +1,34 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 
 public class GrindSpline : MonoBehaviour
 {
-    public Color GizmoColor = Color.green;
+    public enum Types
+    {
+        Concrete,
+        Metal,
+        Wood
+    }
+
+    public Types GrindType;
+    public bool IsRound;
+
+    private Color gizmoColor = Color.green;
+
+    private void OnValidate()
+    {
+        var proper_name = $"GrindSpline_{GrindType}{(IsRound ? "_Round" : "")}";
+
+        if (gameObject.name.StartsWith(proper_name) == false)
+        {
+            gameObject.name = proper_name;
+        }
+    }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = GizmoColor;
+        Gizmos.color = gizmoColor;
 
         for (int i = 0; i < transform.childCount; i++)
         {
