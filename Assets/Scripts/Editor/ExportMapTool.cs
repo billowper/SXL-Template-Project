@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using System.IO;
+using System.Linq;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// One-click export of the active scene to a unique asset bundle, with automatic version numbering
@@ -16,6 +20,10 @@ public static class ExportMapTool
     public static void ExportMap()
     {
         var scene = SceneManager.GetActiveScene();
+
+        EditorSceneManager.SaveScene(scene);
+
+        ProcessGrindsObjects(scene);
 
         var version = EditorPrefs.GetInt($"{scene.name}_version", 1);
 
@@ -42,5 +50,35 @@ public static class ExportMapTool
         Debug.Log($"Copying {bundle_path} to {dest_path}");
 
         File.Copy(bundle_path, dest_path, overwrite: true);
+
+        EditorSceneManager.OpenScene(scene.path);
+    }
+
+    [MenuItem("SXL/Test Export Pre-Process")]
+    public static void TestExportPreProcess()
+    {
+        var scene = SceneManager.GetActiveScene();
+
+        ProcessGrindsObjects(scene);
+    }
+
+    private static void ProcessGrindsObjects(Scene scene)
+    {
+        var root_objects = scene.GetRootGameObjects();
+        var grind_splines = Object.FindObjectsOfType<GrindSpline>().Select(x => x.transform).ToArray();
+        var grinds_root = root_objects.FirstOrDefault(o => o.name == "Grinds") ?? new GameObject("Grinds");
+        
+        foreach (var o in grind_splines)
+        {
+            var prefab_root = PrefabUtility.GetOutermostPrefabInstanceRoot(o);
+            if (prefab_root != null)
+            {
+                PrefabUtility.UnpackPrefabInstance(prefab_root, PrefabUnpackMode.Completely, InteractionMode.UserAction);
+            }
+
+            o.SetParent(grinds_root.transform);
+
+            Object.DestroyImmediate(o.GetComponent<GrindSpline>());
+        }
     }
 }

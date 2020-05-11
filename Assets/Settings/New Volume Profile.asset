@@ -13,84 +13,8 @@ MonoBehaviour:
   m_Name: New Volume Profile
   m_EditorClassIdentifier: 
   components:
-  - {fileID: 114921851603919858}
   - {fileID: 114509606222131370}
-  - {fileID: 114224884392277524}
---- !u!114 &114224884392277524
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3df29e7cc05fbec4aa43e06ea875565d, type: 3}
-  m_Name: ProceduralSky
-  m_EditorClassIdentifier: 
-  active: 1
-  rotation:
-    m_OverrideState: 0
-    m_Value: 0
-    min: 0
-    max: 360
-  skyIntensityMode:
-    m_OverrideState: 0
-    m_Value: 0
-  exposure:
-    m_OverrideState: 0
-    m_Value: 0
-  multiplier:
-    m_OverrideState: 0
-    m_Value: 1
-    min: 0
-  upperHemisphereLuxValue:
-    m_OverrideState: 0
-    m_Value: 1
-    min: 0
-  desiredLuxValue:
-    m_OverrideState: 0
-    m_Value: 20000
-  updateMode:
-    m_OverrideState: 1
-    m_Value: 0
-  updatePeriod:
-    m_OverrideState: 0
-    m_Value: 0
-    min: 0
-  includeSunInBaking:
-    m_OverrideState: 1
-    m_Value: 1
-  sunSize:
-    m_OverrideState: 1
-    m_Value: 0.008
-    min: 0
-    max: 1
-  sunSizeConvergence:
-    m_OverrideState: 1
-    m_Value: 9.95
-    min: 1
-    max: 10
-  atmosphereThickness:
-    m_OverrideState: 0
-    m_Value: 1.52
-    min: 0
-    max: 5
-  skyTint:
-    m_OverrideState: 0
-    m_Value: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    hdr: 0
-    showAlpha: 1
-    showEyeDropper: 1
-  groundColor:
-    m_OverrideState: 0
-    m_Value: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 1}
-    hdr: 0
-    showAlpha: 1
-    showEyeDropper: 1
-  enableSunDisk:
-    m_OverrideState: 1
-    m_Value: 1
+  - {fileID: 114905110145258214}
 --- !u!114 &114509606222131370
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -106,11 +30,11 @@ MonoBehaviour:
   active: 1
   skyType:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 1
   fogType:
     m_OverrideState: 1
-    m_Value: 3
---- !u!114 &114921851603919858
+    m_Value: 0
+--- !u!114 &114905110145258214
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,68 +43,42 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29b00527f85bb3346a4d2cb710971587, type: 3}
-  m_Name: VolumetricFog
+  m_Script: {fileID: 11500000, guid: 59b6606ef2548734bb6d11b9d160bc7e, type: 3}
+  m_Name: HDRISky
   m_EditorClassIdentifier: 
   active: 1
-  colorMode:
-    m_OverrideState: 0
-    m_Value: 1
-  color:
-    m_OverrideState: 0
-    m_Value: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    hdr: 1
-    showAlpha: 0
-    showEyeDropper: 1
-  density:
-    m_OverrideState: 0
-    m_Value: 1
-    min: 0
-    max: 1
-  maxFogDistance:
+  rotation:
     m_OverrideState: 1
-    m_Value: 5000
+    m_Value: 276
     min: 0
-  mipFogMaxMip:
+    max: 360
+  skyIntensityMode:
     m_OverrideState: 0
-    m_Value: 0.5
+    m_Value: 0
+  exposure:
+    m_OverrideState: 0
+    m_Value: 0
+  multiplier:
+    m_OverrideState: 0
+    m_Value: 1
     min: 0
-    max: 1
-  mipFogNear:
+  upperHemisphereLuxValue:
+    m_OverrideState: 0
+    m_Value: 3.8090522
+    min: 0
+  desiredLuxValue:
+    m_OverrideState: 0
+    m_Value: 20000
+  updateMode:
+    m_OverrideState: 0
+    m_Value: 0
+  updatePeriod:
     m_OverrideState: 0
     m_Value: 0
     min: 0
-  mipFogFar:
+  includeSunInBaking:
     m_OverrideState: 0
-    m_Value: 1000
-    min: 0
-  albedo:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
-    hdr: 0
-    showAlpha: 1
-    showEyeDropper: 1
-  meanFreePath:
-    m_OverrideState: 1
-    m_Value: 1500
-    min: 1
-  baseHeight:
-    m_OverrideState: 1
     m_Value: 0
-  meanHeight:
+  hdriSky:
     m_OverrideState: 1
-    m_Value: 10
-    min: 1
-  anisotropy:
-    m_OverrideState: 1
-    m_Value: 0.27
-    min: -1
-    max: 1
-  globalLightProbeDimmer:
-    m_OverrideState: 1
-    m_Value: 1
-    min: 0
-    max: 1
-  enableDistantFog:
-    m_OverrideState: 1
-    m_Value: 1
+    m_Value: {fileID: 8900000, guid: 0bee20b543822ad4786d159008d54651, type: 3}
