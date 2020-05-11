@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 5972883289419053628}
   - component: {fileID: 5972883289419053629}
   m_Layer: 0
-  m_Name: GrindSplineConcrete
+  m_Name: GrindSpline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 5972883289980203846}
   - component: {fileID: 5972883289980203847}
   m_Layer: 0
-  m_Name: GrindSplineConcrete
+  m_Name: GrindSpline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

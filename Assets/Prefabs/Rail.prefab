@@ -28,8 +28,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5385652295788275965}
   m_LocalRotation: {x: -0, y: -0, z: -0.70710576, w: 0.7071079}
-  m_LocalPosition: {x: -0.598504, y: -1.1340017, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.4930001, y: -1.25, z: 0}
+  m_LocalScale: {x: 0.84586, y: 0.84586, z: 0.84586}
   m_Children: []
   m_Father: {fileID: 5385652296033554418}
   m_RootOrder: 4
@@ -2844,10 +2844,10 @@ MonoBehaviour:
   backfaces_: 0
   materials:
   - {fileID: 2100000, guid: 892d2b1b368d9a6448420a4c662c1f36, type: 2}
-  latestID_: 2464
+  latestID_: 2530
   editMode: 1
   recalculateTangents: 1
-  instanceID: -175088
+  instanceID: -46910
   assetPath: 
 --- !u!33 &5385652295788275962
 MeshFilter:
@@ -2886,7 +2886,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 2
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -2905,7 +2905,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 14
   m_Mesh: {fileID: 0}
 --- !u!1 &5385652296033554423
@@ -2935,7 +2935,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5385652296033554423}
-  m_LocalRotation: {x: -0, y: -0, z: 0.70710576, w: 0.7071079}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.70710677}
   m_LocalPosition: {x: 12.915, y: 0.5985, z: -8.505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5758,10 +5758,10 @@ MonoBehaviour:
   backfaces_: 0
   materials:
   - {fileID: 2100000, guid: 892d2b1b368d9a6448420a4c662c1f36, type: 2}
-  latestID_: 44030
+  latestID_: 44492
   editMode: 1
   recalculateTangents: 1
-  instanceID: 36236
+  instanceID: -46854
   assetPath: 
 --- !u!33 &5385652296033554420
 MeshFilter:
@@ -5846,7 +5846,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5385652296263732868}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 4.5905, y: -0.0000091791, z: 0}
+  m_LocalPosition: {x: 4.5905, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5385652297259567714}
@@ -5880,8 +5880,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5385652296509877872}
   m_LocalRotation: {x: -0, y: -0, z: -0.70710576, w: 0.7071079}
-  m_LocalPosition: {x: -0.5985099, y: 0.88199836, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.49300593, y: 1.0000002, z: 0}
+  m_LocalScale: {x: 0.84586, y: 0.84586, z: 0.84586}
   m_Children: []
   m_Father: {fileID: 5385652296033554418}
   m_RootOrder: 2
@@ -8696,10 +8696,10 @@ MonoBehaviour:
   backfaces_: 0
   materials:
   - {fileID: 2100000, guid: 892d2b1b368d9a6448420a4c662c1f36, type: 2}
-  latestID_: 2398
+  latestID_: 2464
   editMode: 1
   recalculateTangents: 1
-  instanceID: -174896
+  instanceID: -46916
   assetPath: 
 --- !u!33 &5385652296509877869
 MeshFilter:
@@ -8738,7 +8738,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 2
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -8757,7 +8757,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 14
   m_Mesh: {fileID: 0}
 --- !u!1 &5385652297029204349
@@ -8788,8 +8788,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5385652297029204349}
   m_LocalRotation: {x: -0, y: -0, z: -0.70710576, w: 0.7071079}
-  m_LocalPosition: {x: -0.5985089, y: 2.8979983, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.4930001, y: 3.0000472, z: 0}
+  m_LocalScale: {x: 0.84586, y: 0.84586, z: 0.84586}
   m_Children: []
   m_Father: {fileID: 5385652296033554418}
   m_RootOrder: 0
@@ -11604,10 +11604,10 @@ MonoBehaviour:
   backfaces_: 0
   materials:
   - {fileID: 2100000, guid: 892d2b1b368d9a6448420a4c662c1f36, type: 2}
-  latestID_: 2266
+  latestID_: 2332
   editMode: 1
   recalculateTangents: 1
-  instanceID: -174412
+  instanceID: -46920
   assetPath: 
 --- !u!33 &5385652297029204346
 MeshFilter:
@@ -11646,7 +11646,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 2
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -11665,7 +11665,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 14
   m_Mesh: {fileID: 0}
 --- !u!1 &5385652297259567715
@@ -11679,7 +11679,7 @@ GameObject:
   - component: {fileID: 5385652297259567714}
   - component: {fileID: 5385652297259567713}
   m_Layer: 0
-  m_Name: GrindSplineMetal
+  m_Name: GrindSplineRound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11693,7 +11693,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5385652297259567715}
   m_LocalRotation: {x: -0, y: -0, z: -0.70710576, w: 0.7071079}
-  m_LocalPosition: {x: 0.0315007, y: 3.1751008, z: 0}
+  m_LocalPosition: {x: 0.03150082, y: 3.1751046, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5385652297586314276}
@@ -11742,8 +11742,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5385652297430534685}
   m_LocalRotation: {x: -0, y: -0, z: -0.70710576, w: 0.7071079}
-  m_LocalPosition: {x: -0.598507, y: -0.12600213, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.49300596, y: 0.000000059604645, z: 0}
+  m_LocalScale: {x: 0.84586, y: 0.84586, z: 0.84586}
   m_Children: []
   m_Father: {fileID: 5385652296033554418}
   m_RootOrder: 3
@@ -14558,10 +14558,10 @@ MonoBehaviour:
   backfaces_: 0
   materials:
   - {fileID: 2100000, guid: 892d2b1b368d9a6448420a4c662c1f36, type: 2}
-  latestID_: 2464
+  latestID_: 2530
   editMode: 1
   recalculateTangents: 1
-  instanceID: -175004
+  instanceID: -46926
   assetPath: 
 --- !u!33 &5385652297430534682
 MeshFilter:
@@ -14600,7 +14600,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 2
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -14619,7 +14619,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 14
   m_Mesh: {fileID: 0}
 --- !u!1 &5385652297586314277
@@ -14680,8 +14680,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5385652297653164657}
   m_LocalRotation: {x: -0, y: -0, z: -0.70710576, w: 0.7071079}
-  m_LocalPosition: {x: -0.5985128, y: 1.8899989, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.4930057, y: 2.0000002, z: 0}
+  m_LocalScale: {x: 0.84586, y: 0.84586, z: 0.84586}
   m_Children: []
   m_Father: {fileID: 5385652296033554418}
   m_RootOrder: 1
@@ -17496,10 +17496,10 @@ MonoBehaviour:
   backfaces_: 0
   materials:
   - {fileID: 2100000, guid: 892d2b1b368d9a6448420a4c662c1f36, type: 2}
-  latestID_: 2332
+  latestID_: 2398
   editMode: 1
   recalculateTangents: 1
-  instanceID: -174812
+  instanceID: -46932
   assetPath: 
 --- !u!33 &5385652297653164654
 MeshFilter:
@@ -17538,7 +17538,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 2
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -17557,6 +17557,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 14
   m_Mesh: {fileID: 0}
