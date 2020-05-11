@@ -54,14 +54,6 @@ public static class ExportMapTool
         EditorSceneManager.OpenScene(scene.path);
     }
 
-    [MenuItem("SXL/Test Export Pre-Process")]
-    public static void TestExportPreProcess()
-    {
-        var scene = SceneManager.GetActiveScene();
-
-        ProcessGrindsObjects(scene);
-    }
-
     private static void ProcessGrindsObjects(Scene scene)
     {
         var root_objects = scene.GetRootGameObjects();
