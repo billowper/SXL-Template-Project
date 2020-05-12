@@ -20,7 +20,7 @@ public class GrindSpline : MonoBehaviour
     {
         var proper_name = $"GrindSpline_{GrindType}{(IsRound ? "_Round" : "")}";
 
-        if (gameObject.name.StartsWith(proper_name) == false)
+        if (gameObject.name.Contains(proper_name) == false || IsRound == false && gameObject.name.Contains("_Round"))
         {
             gameObject.name = proper_name;
         }
