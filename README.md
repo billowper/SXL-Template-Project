@@ -10,7 +10,7 @@ Unity template project and a collection of tools for Skater XL custom map creati
 Builds your open scene to an AssetBundle and copies the file to the Skater XL custom maps directory in My Documents, ready to play! 
 
 ###  GrindSpline Helper
-This component makes setting up Grindable objects a little easier, with visual gizmos and some extra steps during the export process, allowing for more flexible scene setups.
+This component makes setting up grindable objects a little easier, with visual gizmos and some extra steps during the export process, allowing for more flexible scene setups. 
 
 * Add a GridSpline component to a GameObject, use the "Add Point" button to create points for the grind spline
 * The GrindSpline component will automatically update the name of the object so that it gets picked up correctly by the importer
