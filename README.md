@@ -9,6 +9,8 @@ Unity template project and a collection of tools for Skater XL custom map creati
 ### Export Tool
 Builds your open scene to an AssetBundle and copies the file to the Skater XL custom maps directory in My Documents, ready to play! 
 
+![ExportTool](https://i.imgur.com/afqJXVK.jpg)
+
 ###  GrindSpline Helper
 This component makes setting up grindable objects a little easier, with visual gizmos and some extra steps during the export process, allowing for more flexible scene setups. 
 
