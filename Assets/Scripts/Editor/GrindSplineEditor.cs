@@ -11,7 +11,7 @@ public class GrindSplineEditor : Editor
         {
             var p = ((GrindSpline) target).transform;
             var n = p.childCount;
-            var go = new GameObject($"Point {n + 1}");
+            var go = new GameObject($"Point ({n + 1})");
 
             go.transform.SetParent(p);
             go.transform.localPosition = Vector3.zero;
