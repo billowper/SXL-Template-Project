@@ -60,7 +60,7 @@ public class GrindSurface : MonoBehaviour
 
         go.transform.position = pointA;
         go.transform.LookAt(pointB);
-        go.transform.SetParent(ColliderContainer ?? transform);
+        go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform);
 
         switch (Spline.GrindType)
         {
