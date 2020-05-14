@@ -10,6 +10,13 @@ public class GrindSurfaceEditor : Editor
 
         var creator = (GrindSurface) target;
 
+        if (creator.GetComponent<GrindSpline>() != null)
+        {
+            EditorGUILayout.HelpBox("Found GrindSpline on this GameObject. This is not supported. Please remove the GrindSpline or this component.", MessageType.Error);
+
+            GUI.enabled = false;
+        }
+
         EditorGUI.BeginChangeCheck();
 
         EditorGUILayout.Space();
@@ -63,5 +70,7 @@ public class GrindSurfaceEditor : Editor
         {
             serializedObject.ApplyModifiedProperties();
         }
+
+        GUI.enabled = true;
     }
 }

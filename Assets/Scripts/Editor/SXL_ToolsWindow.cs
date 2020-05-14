@@ -12,7 +12,9 @@ public class SXL_ToolsWindow : EditorWindow
     [MenuItem("SXL/Tools Window")]
     private static void Init()
     {
-        GetWindow<SXL_ToolsWindow>().Show();
+        var window = GetWindow<SXL_ToolsWindow>();
+        window.titleContent = new GUIContent("SXL Tools");
+        window.Show();
     }
 
     private void OnEnable()

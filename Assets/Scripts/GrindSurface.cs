@@ -26,6 +26,12 @@ public class GrindSurface : MonoBehaviour
 
     public void GenerateColliders()
     {
+        if (GetComponent<GrindSpline>() != null)
+        {
+            Debug.LogError("GrindSurface cannot generate colliders as there is a GrindSpline component on the same GameObject");
+            return;
+        }
+
         foreach (var c in GeneratedColliders.ToArray())
         {
             if (c != null) 
