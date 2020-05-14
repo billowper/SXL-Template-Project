@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Generates colliders from a GrindSpline component
+/// </summary>
 public class GrindSurface : MonoBehaviour
 {
     public GrindSpline Spline;
@@ -12,7 +15,7 @@ public class GrindSurface : MonoBehaviour
     public bool FlipEdgeSide;
 
     [SerializeField, HideInInspector] private int previousSplineLength;
-    
+
     private void OnValidate()
     {
         if (Spline == null)

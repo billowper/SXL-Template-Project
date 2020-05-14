@@ -2,16 +2,23 @@
 using UnityEngine;
 
 [CustomEditor(typeof(GrindSurface))]
-public class GrindCreatorEditor : Editor
+public class GrindSurfaceEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+        serializedObject.UpdateIfRequiredOrScript();
+
         var creator = (GrindSurface) target;
 
         EditorGUI.BeginChangeCheck();
 
         EditorGUILayout.Space();
         EditorGUILayout.PropertyField(serializedObject.FindProperty("Spline"));
+        
+        if (EditorGUI.EndChangeCheck())
+        {
+            serializedObject.ApplyModifiedProperties();
+        }
 
         if (serializedObject.FindProperty("Spline").objectReferenceValue == null)
         {
@@ -28,8 +35,9 @@ public class GrindCreatorEditor : Editor
             return;
         }
 
-        serializedObject.UpdateIfRequiredOrScript();
         
+        EditorGUI.BeginChangeCheck();
+
         if (creator.Spline.IsRound)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliderRadius"));
