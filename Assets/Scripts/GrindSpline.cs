@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -13,12 +12,6 @@ public class GrindSpline : MonoBehaviour
 
     public Types GrindType;
     public bool IsRound;
-    public List<Collider> GeneratedColliders = new List<Collider>();
-    public float GeneratedColliderRadius = 0.1f;
-    public float GeneratedColliderWidth = 0.1f;
-    public float GeneratedColliderDepth = 0.05f;
-    public bool IsEdge;
-    public bool FlipEdgeSide;
 
     private Color gizmoColor = Color.green;
 
@@ -48,66 +41,15 @@ public class GrindSpline : MonoBehaviour
             }
         }
     }
-    
-    public void GenerateColliders()
+
+    public void AddPoint()
     {
-        foreach (var c in GeneratedColliders.ToArray())
-        {
-            if (c != null) 
-                DestroyImmediate(c.gameObject);
-        }
-        
-        GeneratedColliders.Clear();
+        var p = transform;
+        var n = p.childCount;
+        var go = new GameObject($"Point ({n + 1})");
 
-        for (int i = 0; i < transform.childCount - 1; i++)
-        {
-            var col = CreateColliderBetweenPoints(transform.GetChild(i).position, transform.GetChild(i + 1).position);
-
-            GeneratedColliders.Add(col);
-        }
+        go.transform.SetParent(p);
+        go.transform.localPosition = Vector3.zero;
     }
 
-    private Collider CreateColliderBetweenPoints(Vector3 pointA, Vector3 pointB)
-    {
-        var go = new GameObject("Grind Cols")
-        {
-            layer = LayerMask.NameToLayer("Grindable")
-        };
-
-        go.transform.position = pointA;
-        go.transform.LookAt(pointB);
-        go.transform.SetParent(transform.parent);
-
-        switch (GrindType)
-        {
-            case Types.Concrete:
-                go.tag = "Grind_Concrete";
-                break;
-            case Types.Metal:
-                go.tag = "Grind_Metal";
-                break;
-        }
-
-        var length = Vector3.Distance(pointA, pointB);
-
-        if (IsRound)
-        {
-            var cap = go.AddComponent<CapsuleCollider>();
-
-            cap.direction = 2;
-            cap.radius = GeneratedColliderRadius;
-            cap.height = length + 2f * GeneratedColliderRadius;
-            cap.center = Vector3.forward * length / 2f + Vector3.down * GeneratedColliderRadius;
-        }
-        else
-        {
-            var box = go.AddComponent<BoxCollider>();
-
-            box.size = new Vector3(GeneratedColliderWidth, GeneratedColliderDepth, length);
-            var offset = IsEdge ? new Vector3(FlipEdgeSide ? (GeneratedColliderWidth / 2f) * -1 : GeneratedColliderWidth / 2f, 0, 0) : Vector3.zero;
-            box.center = offset + Vector3.forward * length / 2f + Vector3.down * GeneratedColliderDepth / 2f;
-        }
-        
-        return go.GetComponent<Collider>();
-    }
 }
