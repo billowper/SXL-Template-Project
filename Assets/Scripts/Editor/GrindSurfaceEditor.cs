@@ -59,6 +59,8 @@ public class GrindSurfaceEditor : Editor
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("FlipEdgeSide"));
         }
 
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderContainer"));
+
         if (GUILayout.Button("Generate Colliders"))
         {
             creator.GenerateColliders();

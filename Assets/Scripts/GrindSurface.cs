@@ -7,6 +7,7 @@ using UnityEngine;
 public class GrindSurface : MonoBehaviour
 {
     public GrindSpline Spline;
+    public Transform ColliderContainer;
     public List<Collider> GeneratedColliders = new List<Collider>();
     public float GeneratedColliderRadius = 0.1f;
     public float GeneratedColliderWidth = 0.1f;
@@ -59,7 +60,7 @@ public class GrindSurface : MonoBehaviour
 
         go.transform.position = pointA;
         go.transform.LookAt(pointB);
-        go.transform.SetParent(transform);
+        go.transform.SetParent(ColliderContainer ?? transform);
 
         switch (Spline.GrindType)
         {
