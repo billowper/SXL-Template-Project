@@ -74,14 +74,16 @@ public static class ExportMapTool
     private static void ProcessGrindsObjects(Scene scene)
     {
         var root_objects = scene.GetRootGameObjects();
-        var grind_surfaces = Object.FindObjectsOfType<GrindSurface>();
         var grind_splines = Object.FindObjectsOfType<GrindSpline>();
         var grinds_root = root_objects.FirstOrDefault(o => o.name == "Grinds") ?? new GameObject("Grinds");
 
+        /* TODO : leaving this off out for now since it fucks up prefabs and prevents user editing after generation which might be preferable
+        var grind_surfaces = Object.FindObjectsOfType<GrindSurface>();
         foreach (var s in grind_surfaces)
         {
             s.GenerateColliders();
         }
+        */
         
         foreach (var o in grind_splines)
         {

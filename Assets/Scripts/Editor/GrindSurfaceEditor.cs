@@ -28,6 +28,9 @@ public class GrindSurfaceEditor : Editor
 
         EditorGUILayout.BeginVertical(new GUIStyle("box"));
         {
+            EditorGUILayout.LabelField("Splines", EditorStyles.boldLabel);
+
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Add GrindSpline"))
             {
                 CreateSpline();
@@ -35,23 +38,27 @@ public class GrindSurfaceEditor : Editor
                 serializedObject.UpdateIfRequiredOrScript();
             }
 
-            drawSplines = GUILayout.Toggle(drawSplines, "Draw GrindSplines", new GUIStyle("button"));
+            drawSplines = GUILayout.Toggle(drawSplines, new GUIContent("Draw GrindSplines"), new GUIStyle("button"));
+            EditorGUILayout.EndHorizontal();
 
-            EditorGUILayout.Space();
-
+            EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Splines"), true);
+            EditorGUI.indentLevel--;
         }
         EditorGUILayout.EndVertical();
-
 
         // ---------------------------- Colliders
 
         EditorGUILayout.BeginVertical(new GUIStyle("box"));
         {
+            EditorGUILayout.LabelField("Colliders", EditorStyles.boldLabel);
+
             if (GUILayout.Button("Generate Colliders"))
             {
                 grindSurface.GenerateColliders();
             }
+
+            EditorGUILayout.Separator();
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderType"));
 
@@ -68,8 +75,9 @@ public class GrindSurfaceEditor : Editor
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderContainer"));
 
-
+            EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliders"), true);
+            EditorGUI.indentLevel--;
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -77,7 +85,6 @@ public class GrindSurfaceEditor : Editor
             }
         }
         EditorGUILayout.EndVertical();
-        EditorGUILayout.Space();
         
         if (GUILayout.Button("Destroy & Reset"))
         {
@@ -135,7 +142,7 @@ public class GrindSurfaceEditor : Editor
 
                 GUILayout.BeginArea(r);
                 GUILayout.BeginVertical(new GUIStyle("box"));
-                GUILayout.Label($"<color=white>LMB = Add Point/Create New Spline, Esc = Stop Drawing</color>", new GUIStyle("label") { richText = true, fontSize = 14, fontStyle =  FontStyle.Bold});
+                GUILayout.Label($"<color=white>LMB = Add Point/Create New Spline, SPACE = Complete Spline, ESC = Stop Drawing</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
                 GUILayout.EndVertical();
                 GUILayout.EndArea();
             }
@@ -149,6 +156,11 @@ public class GrindSurfaceEditor : Editor
 
             Handles.color = Color.green;
 
+            if (activeSpline != null && activeSpline.transform.childCount > 0)
+            {
+                Handles.DrawLine(activeSpline.transform.GetChild(activeSpline.transform.childCount - 1).position, nearestVert);
+            }
+
             Handles.Label(nearestVert + Vector3.up * .5f, activeSpline != null ? "Add Point" : "Create Grind", new GUIStyle("whiteLabel"));
             Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, 0.25f, EventType.Repaint);
 
@@ -161,7 +173,7 @@ public class GrindSurfaceEditor : Editor
                 {
                     activeSpline = CreateSpline();
                     activeSpline.transform.position = nearestVert;
-                    
+
                     Undo.RegisterCreatedObjectUndo(activeSpline.gameObject, "Create GrindSpline");
 
                     GrindSplineUtils.AddPoint(activeSpline);
@@ -170,6 +182,13 @@ public class GrindSurfaceEditor : Editor
                 {
                     GrindSplineUtils.AddPoint(activeSpline, nearestVert);
                 }
+            }
+
+            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Space)
+            {
+                activeSpline = null;
+                grindSurface.GenerateColliders();
+                Repaint();
             }
 
             if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape)
