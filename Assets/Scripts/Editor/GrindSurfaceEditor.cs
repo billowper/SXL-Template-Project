@@ -138,11 +138,11 @@ public class GrindSurfaceEditor : Editor
         {
             Handles.BeginGUI();
             {
-                var r = new Rect(10, SceneView.currentDrawingSceneView.camera.pixelHeight - 40, 600, 30);
+                var r = new Rect(10, SceneView.currentDrawingSceneView.camera.pixelHeight - 30*3 + 10, 400, 30*3);
 
                 GUILayout.BeginArea(r);
                 GUILayout.BeginVertical(new GUIStyle("box"));
-                GUILayout.Label($"<color=white>LMB = Add Point/Create New Spline, SPACE = Complete Spline, ESC = Stop Drawing</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
+                GUILayout.Label($"<color=white>LMB = Add Point/Create New Spline\nSPACE = Complete Spline\nESC = Stop Drawing</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
                 GUILayout.EndVertical();
                 GUILayout.EndArea();
             }
