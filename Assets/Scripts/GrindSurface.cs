@@ -2,26 +2,32 @@
 using UnityEngine;
 
 /// <summary>
-/// Generates colliders from a GrindSpline component
+/// Generates colliders from GrindSpline components
 /// </summary>
 public class GrindSurface : MonoBehaviour
 {
-    public GrindSpline Spline;
+    public List<GrindSpline> Splines = new List<GrindSpline>();
     public Transform ColliderContainer;
     public List<Collider> GeneratedColliders = new List<Collider>();
+
+    public enum ColliderTypes
+    {
+        Box,
+        Capsule
+    }
+    public ColliderTypes ColliderType;
     public float GeneratedColliderRadius = 0.1f;
     public float GeneratedColliderWidth = 0.1f;
     public float GeneratedColliderDepth = 0.05f;
     public bool IsEdge;
-    public bool FlipEdgeSide;
 
-    [SerializeField, HideInInspector] private int previousSplineLength;
+    private bool flipEdgeOffset;
 
     private void OnValidate()
     {
-        if (Spline == null)
+        if (Splines.Count == 0)
         {
-            Spline = GetComponentInChildren<GrindSpline>();
+            Splines.AddRange(GetComponentsInChildren<GrindSpline>());
         }
     }
 
@@ -41,17 +47,46 @@ public class GrindSurface : MonoBehaviour
         
         GeneratedColliders.Clear();
 
-        for (int i = 0; i < Spline.transform.childCount - 1; i++)
+        var test_cols = GetComponentsInChildren<Collider>();
+
+        foreach (var spline in Splines)
         {
-            var col = CreateColliderBetweenPoints(Spline.transform.GetChild(i).position, Spline.transform.GetChild(i + 1).position);
+            if (spline == null || spline.transform.childCount == 0)
+                return;
 
-            GeneratedColliders.Add(col);
+            flipEdgeOffset = false;
+
+            for (int i = 0; i < spline.transform.childCount - 1; i++)
+            {
+                var a = spline.transform.GetChild(i).position;
+                var b = spline.transform.GetChild(i + 1).position;
+
+                if (i == 0)
+                {
+                    if (IsEdge)
+                    {
+                        var dir = a - b;
+                        var right = Vector3.Cross(dir.normalized, Vector3.up);
+                        var test_pos = a + (right * GeneratedColliderWidth);
+
+                        foreach (var t in test_cols)
+                        {
+                            if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false)
+                            {
+                                flipEdgeOffset = true;
+                            }
+                        }
+                    }
+                }
+
+                var col = CreateColliderBetweenPoints(spline, a, b);
+
+                GeneratedColliders.Add(col);
+            }
         }
-
-        previousSplineLength = Spline.transform.childCount;
     }
 
-    private Collider CreateColliderBetweenPoints(Vector3 pointA, Vector3 pointB)
+    private Collider CreateColliderBetweenPoints(GrindSpline spline, Vector3 pointA, Vector3 pointB)
     {
         var go = new GameObject("Grind Cols")
         {
@@ -62,7 +97,7 @@ public class GrindSurface : MonoBehaviour
         go.transform.LookAt(pointB);
         go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform);
 
-        switch (Spline.GrindType)
+        switch (spline.GrindType)
         {
             case GrindSpline.Types.Concrete:
                 go.tag = "Grind_Concrete";
@@ -74,7 +109,7 @@ public class GrindSurface : MonoBehaviour
 
         var length = Vector3.Distance(pointA, pointB);
 
-        if (Spline.IsRound)
+        if (spline.IsRound)
         {
             var cap = go.AddComponent<CapsuleCollider>();
 
@@ -88,7 +123,7 @@ public class GrindSurface : MonoBehaviour
             var box = go.AddComponent<BoxCollider>();
 
             box.size = new Vector3(GeneratedColliderWidth, GeneratedColliderDepth, length);
-            var offset = IsEdge ? new Vector3(FlipEdgeSide ? (GeneratedColliderWidth / 2f) * -1 : GeneratedColliderWidth / 2f, 0, 0) : Vector3.zero;
+            var offset = IsEdge ? new Vector3(flipEdgeOffset ? (GeneratedColliderWidth / 2f) * -1 : GeneratedColliderWidth / 2f, 0, 0) : Vector3.zero;
             box.center = offset + Vector3.forward * length / 2f + Vector3.down * GeneratedColliderDepth / 2f;
         }
         

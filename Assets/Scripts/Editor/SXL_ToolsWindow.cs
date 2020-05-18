@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class SXL_ToolsWindow : EditorWindow
 {
-    private GUIStyle containerStyle;
+    [SerializeField] private GameObject scaleRef;
 
     [MenuItem("SXL/Tools Window")]
     private static void Init()
@@ -21,10 +21,27 @@ public class SXL_ToolsWindow : EditorWindow
     {
         containerStyle = new GUIStyle() {padding = new RectOffset(10, 10, 10, 10)};
         UseVersionNumbering = EditorPrefs.GetBool("SXL_UseVersionNumbering", true);
+
+        if (scaleRefInstance == null)
+        {
+            scaleRefInstance = Instantiate(scaleRef);
+            scaleRefInstance.hideFlags = HideFlags.DontSave | HideFlags.NotEditable;
+            scaleRefInstance.SetActive(false);
+        }
     }
 
+    private void OnDisable()
+    {
+        if (scaleRefInstance != null)
+        {
+            DestroyImmediate(scaleRefInstance);
+        }
+    }
+
+    private GUIStyle containerStyle;
     private bool UseVersionNumbering;
     private string OverrideAssetBundleName;
+    private static GameObject scaleRefInstance;
 
     private void OnGUI()
     {
@@ -63,5 +80,19 @@ public class SXL_ToolsWindow : EditorWindow
             }
         }
         EditorGUILayout.EndVertical();
+    }
+
+    [MenuItem("SXL/Place Player Scale Reference at Cursor #g")]
+    public static void PlaceScaleReference()
+    {
+        var mouse_pos = Event.current != null ? Event.current.mousePosition : Vector2.zero;
+        mouse_pos.y = SceneView.lastActiveSceneView.camera.pixelHeight - mouse_pos.y;
+        var ray = SceneView.lastActiveSceneView.camera.ScreenPointToRay(mouse_pos);
+
+        if (Physics.Raycast(ray, out var hit))
+        {
+            scaleRefInstance.transform.position = hit.point;
+            scaleRefInstance.SetActive(true);
+        }
     }
 }

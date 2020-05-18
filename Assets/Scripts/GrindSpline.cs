@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 public class GrindSpline : MonoBehaviour
 {
@@ -39,17 +40,4 @@ public class GrindSpline : MonoBehaviour
             }
         }
     }
-
-    public void AddPoint()
-    {
-        var pos = transform.childCount > 0 ? transform.GetChild(transform.childCount - 1).localPosition : Vector3.zero;
-
-        var p = transform;
-        var n = p.childCount;
-        var go = new GameObject($"Point ({n + 1})");
-
-        go.transform.SetParent(p);
-        go.transform.localPosition = pos + transform.InverseTransformVector(Vector3.forward);
-    }
-
 }

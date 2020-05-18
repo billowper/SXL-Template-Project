@@ -74,8 +74,14 @@ public static class ExportMapTool
     private static void ProcessGrindsObjects(Scene scene)
     {
         var root_objects = scene.GetRootGameObjects();
-        var grind_splines = Object.FindObjectsOfType<GrindSpline>().Select(x => x.transform).ToArray();
+        var grind_surfaces = Object.FindObjectsOfType<GrindSurface>();
+        var grind_splines = Object.FindObjectsOfType<GrindSpline>();
         var grinds_root = root_objects.FirstOrDefault(o => o.name == "Grinds") ?? new GameObject("Grinds");
+
+        foreach (var s in grind_surfaces)
+        {
+            s.GenerateColliders();
+        }
         
         foreach (var o in grind_splines)
         {
@@ -85,9 +91,7 @@ public static class ExportMapTool
                 PrefabUtility.UnpackPrefabInstance(prefab_root, PrefabUnpackMode.Completely, InteractionMode.UserAction);
             }
 
-            o.SetParent(grinds_root.transform);
-
-            Object.DestroyImmediate(o.GetComponent<GrindSpline>());
+            o.transform.SetParent(grinds_root.transform);
         }
     }
 }
