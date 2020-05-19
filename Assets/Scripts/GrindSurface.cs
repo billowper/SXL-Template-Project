@@ -90,19 +90,19 @@ public class GrindSurface : MonoBehaviour
     {
         var go = new GameObject("Grind Cols")
         {
-            layer = LayerMask.NameToLayer("Grindable")
+            layer = LayerMask.NameToLayer(spline.IsCoping ? "Coping" : "Grindable")
         };
 
         go.transform.position = pointA;
         go.transform.LookAt(pointB);
         go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform);
 
-        switch (spline.GrindType)
+        switch (spline.SurfaceType)
         {
-            case GrindSpline.Types.Concrete:
+            case GrindSpline.SurfaceTypes.Concrete:
                 go.tag = "Grind_Concrete";
                 break;
-            case GrindSpline.Types.Metal:
+            case GrindSpline.SurfaceTypes.Metal:
                 go.tag = "Grind_Metal";
                 break;
         }

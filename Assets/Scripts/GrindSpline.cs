@@ -1,22 +1,24 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GrindSpline : MonoBehaviour
 {
-    public enum Types
+    public enum SurfaceTypes
     {
         Concrete,
         Metal,
     }
 
-    public Types GrindType;
+    [FormerlySerializedAs("GrindType")] public SurfaceTypes SurfaceType;
     public bool IsRound;
+    public bool IsCoping;
 
     private Color gizmoColor = Color.green;
 
     private void OnValidate()
     {
-        var proper_name = $"GrindSpline_{GrindType}{(IsRound ? "_Round" : "")}";
+        var proper_name = $"GrindSpline_{SurfaceType}{(IsRound ? "_Round" : "")}";
 
         if (gameObject.name.Contains(proper_name) == false || IsRound == false && gameObject.name.Contains("_Round"))
         {
