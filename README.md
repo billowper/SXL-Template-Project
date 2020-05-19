@@ -11,6 +11,11 @@ Builds your open scene to an AssetBundle and copies the file to the Skater XL cu
 
 ![ExportTool](https://i.imgur.com/afqJXVK.jpg)
 
+### GrindSurface
+This component aims to streamline the creation of grindable objects, including generation of primitive colliders. 
+
+* Add a GrindSurface component to any object, then use the buttons in the inspector to draw or manually add GrindSplines as children. When drawing splines, colliders are automatically generated on confirmation.
+
 ###  GrindSpline Helper
 This component makes setting up grindable objects a little easier, with visual gizmos and some extra steps during the export process, allowing for more flexible scene setups. 
 
