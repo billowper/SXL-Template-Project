@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "ca.andydbc.unity-texture-packer": "file:F:/Downloads/unity-texture-packer-master",
     "com.unity.ads": "2.0.8",
     "com.unity.analytics": "3.2.3",
     "com.unity.collab-proxy": "1.2.15",
