@@ -181,7 +181,7 @@ MonoBehaviour:
       drawDistance: 1000
       atlasWidth: 4096
       atlasHeight: 4096
-      perChannelMask: 1
+      perChannelMask: 0
   allowShaderVariantStripping: 1
   enableSRPBatcher: 0
   diffusionProfileSettings: {fileID: 11400000, guid: 26bdddf49760c61438938733f07fa2a2,

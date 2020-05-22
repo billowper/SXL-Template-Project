@@ -21129,8 +21129,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb3cc901b7f01d74489be9ef70a5506d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GrindType: 1
+  SurfaceType: 1
   IsRound: 1
+  IsCoping: 0
 --- !u!1 &5385652297430534685
 GameObject:
   m_ObjectHideFlags: 0
