@@ -51,39 +51,59 @@ public class GrindSurface : MonoBehaviour
 
         foreach (var spline in Splines)
         {
-            if (spline == null || spline.transform.childCount == 0)
+            if (spline == null || spline.transform.childCount < 2)
                 return;
 
-            flipEdgeOffset = false;
+            flipEdgeOffset = ShouldFlipEdgeOffset(spline, test_cols);
 
             for (int i = 0; i < spline.transform.childCount - 1; i++)
             {
                 var a = spline.transform.GetChild(i).position;
                 var b = spline.transform.GetChild(i + 1).position;
-
-                if (i == 0)
-                {
-                    if (IsEdge)
-                    {
-                        var dir = a - b;
-                        var right = Vector3.Cross(dir.normalized, Vector3.up);
-                        var test_pos = a + (right * GeneratedColliderWidth);
-
-                        foreach (var t in test_cols)
-                        {
-                            if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false)
-                            {
-                                flipEdgeOffset = true;
-                            }
-                        }
-                    }
-                }
-
                 var col = CreateColliderBetweenPoints(spline, a, b);
 
                 GeneratedColliders.Add(col);
             }
         }
+    }
+
+    private bool ShouldFlipEdgeOffset(GrindSpline spline, Collider[] test_cols)
+    {
+        if (IsEdge)
+        {
+            var left = false;
+            
+            var a = spline.transform.GetChild(0).position;
+            var b = spline.transform.GetChild(1).position;
+
+            var dir = a - b;
+            var right = Vector3.Cross(dir.normalized, Vector3.up);
+
+            Debug.DrawRay(a, right, Color.blue, 1f);
+
+            var test_pos = a + (right * GeneratedColliderWidth);
+
+            foreach (var t in test_cols)
+            {
+                // if this ray doesnt hit anything then the ledge is to our left
+
+                if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false)
+                {
+                    Debug.DrawRay(test_pos, Vector3.down, Color.green, 1f);
+
+                    left = true;
+                }
+                else
+                {
+                    Debug.DrawRay(test_pos, Vector3.down, Color.red, 1f);
+                }
+            }
+
+            if (left)
+                return true;
+        }
+
+        return false;
     }
 
     private Collider CreateColliderBetweenPoints(GrindSpline spline, Vector3 pointA, Vector3 pointB)
