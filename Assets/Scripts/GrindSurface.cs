@@ -78,9 +78,6 @@ public class GrindSurface : MonoBehaviour
 
             var dir = a - b;
             var right = Vector3.Cross(dir.normalized, Vector3.up);
-
-            Debug.DrawRay(a, right, Color.blue, 1f);
-
             var test_pos = a + (right * GeneratedColliderWidth);
 
             foreach (var t in test_cols)
@@ -89,13 +86,7 @@ public class GrindSurface : MonoBehaviour
 
                 if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false)
                 {
-                    Debug.DrawRay(test_pos, Vector3.down, Color.green, 1f);
-
                     left = true;
-                }
-                else
-                {
-                    Debug.DrawRay(test_pos, Vector3.down, Color.red, 1f);
                 }
             }
 

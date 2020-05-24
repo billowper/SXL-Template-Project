@@ -66,7 +66,7 @@ public static class GrindSplineUtils
         Undo.RegisterCreatedObjectUndo(go, "GrindSpline.AddPoint");
     }
 
-    public static Vector3 PickNearestVertexToCursor(float radius = 0, Transform parent = null)
+    public static bool PickNearestVertexToCursor(out Vector3 position, float radius = 0, Transform parent = null)
     {
         var mouse_pos = Event.current != null ? Event.current.mousePosition : Vector2.zero;
         mouse_pos.y = SceneView.lastActiveSceneView.camera.pixelHeight - mouse_pos.y;
@@ -86,14 +86,19 @@ public static class GrindSplineUtils
             {
                 if (mesh.transform.IsChildOf(parent) || mesh.transform == parent)
                 {
-                    return GetNearestVertex(mesh, hit.point);
+                    position = GetNearestVertex(mesh, hit.point);
+                    return true;
                 }
             }
-
-            return GetNearestVertex(mesh, hit.point);
+            else
+            {
+                position = GetNearestVertex(mesh, hit.point);
+                return true;
+            }
         }
 
-        return Vector3.zero;
+        position = Vector3.zero;
+        return false;
     }
     
     private static Vector3 GetNearestVertex(MeshFilter mesh, Vector3 reference_point)

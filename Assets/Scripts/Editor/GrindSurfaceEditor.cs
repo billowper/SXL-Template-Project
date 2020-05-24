@@ -136,21 +136,28 @@ public class GrindSurfaceEditor : Editor
     {
         if (drawSplines)
         {
+            /*
             Handles.BeginGUI();
             {
                 var r = new Rect(10, SceneView.currentDrawingSceneView.camera.pixelHeight - 30*3 + 10, 400, 30*3);
 
                 GUILayout.BeginArea(r);
                 GUILayout.BeginVertical(new GUIStyle("box"));
-                GUILayout.Label($"<color=white>LMB = Add Point/Create New Spline\nSPACE = Complete Spline\nESC = Stop Drawing</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
+                GUILayout.Label($"<color=white>Shift + LMB = Add Point/Create New Spline\n" +
+                                $"SPACE = Confirm Spline\n" +
+                                $"ESC = Stop Drawing/Clear Active Spline</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
                 GUILayout.EndVertical();
                 GUILayout.EndArea();
             }
             Handles.EndGUI();
+            */
 
             HandleUtility.AddDefaultControl(GetHashCode());
 
-            nearestVert = GrindSplineUtils.PickNearestVertexToCursor(0.02f, grindSurface.transform);
+            var pick_new_vert = GrindSplineUtils.PickNearestVertexToCursor(out var pos, 0.15f, grindSurface.transform);
+            
+            if (pick_new_vert)
+                nearestVert = pos;
 
             HandleUtility.Repaint();
 
@@ -161,13 +168,17 @@ public class GrindSurfaceEditor : Editor
                 Handles.DrawLine(activeSpline.transform.GetChild(activeSpline.transform.childCount - 1).position, nearestVert);
             }
 
-            Handles.Label(nearestVert + Vector3.up * .5f, activeSpline != null ? "Add Point" : "Create Grind", new GUIStyle("whiteLabel"));
-            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, 0.25f, EventType.Repaint);
+            var label = (activeSpline != null ? "Shift Click : Add Point\n" : "Shift + LMB : Create Grind\n") +
+                        $"Space : Confirm\n" +
+                        $"Escape : {(activeSpline == null ? "Exit Drawing Mode" : "Cancel")}";
+
+            Handles.Label(nearestVert + Vector3.up, label, new GUIStyle("whiteLabel") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
+            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, 0.15f, EventType.Repaint);
 
             if (Event.current == null)
                 return;
 
-            if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
+            if (Event.current.type == EventType.MouseUp && Event.current.button == 0 && Event.current.modifiers.HasFlag(EventModifiers.Shift))
             {
                 if (activeSpline == null)
                 {
@@ -186,16 +197,32 @@ public class GrindSurfaceEditor : Editor
 
             if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Space)
             {
+                if (activeSpline != null && activeSpline.transform.childCount < 2)
+                {
+                    DestroyImmediate(activeSpline.gameObject);
+                    grindSurface.Splines.Remove(activeSpline);
+                }
+
                 activeSpline = null;
+
                 grindSurface.GenerateColliders();
+
                 Repaint();
             }
 
             if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape)
             {
                 drawSplines = false;
-                activeSpline = null;
+
+                if (activeSpline != null)
+                {
+                    DestroyImmediate(activeSpline.gameObject);
+                    grindSurface.Splines.Remove(activeSpline);
+                    activeSpline = null;
+                }
+
                 grindSurface.GenerateColliders();
+
                 Repaint();
             }
         }

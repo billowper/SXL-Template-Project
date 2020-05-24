@@ -28,7 +28,10 @@ public class GrindSplineEditor : Editor
         {
             HandleUtility.AddDefaultControl(GetHashCode());
 
-            nearestVert = GrindSplineUtils.PickNearestVertexToCursor(0.02f);
+            var pick_new_vert = GrindSplineUtils.PickNearestVertexToCursor(out var pos, 0.15f);
+            
+            if (pick_new_vert)
+                nearestVert = pos;
             
             HandleUtility.Repaint();
 
@@ -39,15 +42,25 @@ public class GrindSplineEditor : Editor
                 Handles.DrawLine(grindSpline.transform.GetChild(grindSpline.transform.childCount - 1).position, nearestVert);
             }
 
-            Handles.Label(nearestVert + Vector3.up * .5f, "Add Point");
-            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, 0.25f, EventType.Repaint);
+            var label = "Shift Click : Add Point\n" +
+                        $"Space : Confirm\n" +
+                        $"Escape : Cancel";
+
+            Handles.Label(nearestVert + Vector3.up, label, new GUIStyle("whiteLabel") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, 0.25f, EventType.Repaint);
+            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, 0.15f, EventType.Repaint);
 
             if (Event.current == null)
                 return;
 
-            if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
+            if (Event.current.type == EventType.MouseUp && Event.current.button == 0 && Event.current.modifiers.HasFlag(EventModifiers.Shift))
             {
                 GrindSplineUtils.AddPoint(grindSpline, nearestVert);
+            }
+
+            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Space)
+            {
+                drawPoints = false;
+                Repaint();
             }
 
             if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape)
