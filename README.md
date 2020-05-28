@@ -28,7 +28,7 @@ This component makes setting up grindable objects a little easier, with visual g
 
 ![GrindSpline](https://i.imgur.com/AasBieg.jpg)
 
-## Player Scale Reference Tool
+### Player Scale Reference Tool
 Pressing `Shift + G` will place a scale reference player model at your mouse position in the scene view. The model is Editor Only, so don't worry about him showing up in your exported map!
 
 ![ScaleRef](https://i.imgur.com/N5B9wUk.jpg)
