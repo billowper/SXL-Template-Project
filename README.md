@@ -16,6 +16,8 @@ This component aims to streamline the creation of grindable objects, including g
 
 * Add a GrindSurface component to any object, then use the buttons in the inspector to draw or manually add GrindSplines as children. When drawing splines, colliders are automatically generated on confirmation.
 
+![GrindSurface](https://i.imgur.com/le7mXNI.jpg)
+
 ###  GrindSpline
 This component makes setting up grindable objects a little easier, with visual gizmos and some extra steps during the export process, allowing for more flexible scene setups. 
 
@@ -23,4 +25,10 @@ This component makes setting up grindable objects a little easier, with visual g
 * The GrindSpline component will automatically update the name of the object so that it gets picked up correctly by the importer
 * When Exporting, all objects with a GrindSpline component are moved into a "Grinds" object in the root of the scene, in order for the importer to detect and process them correctly.
 
-![GrindSpline](https://i.imgur.com/XuoMo8H.jpg)
+
+![GrindSpline](https://i.imgur.com/AasBieg.jpg)
+
+## Player Scale Reference Tool
+Pressing `Shift + G` will place a scale reference player model at your mouse position in the scene view. The model is Editor Only, so don't worry about him showing up in your exported map!
+
+![ScaleRef](https://i.imgur.com/N5B9wUk.jpg)
