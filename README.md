@@ -7,9 +7,9 @@ Unity template project and a collection of tools for Skater XL custom map creati
 
 ## Features
 ### Export Tool
-Builds your open scene to an AssetBundle and copies the file to the Skater XL custom maps directory in My Documents, ready to play! 
+Builds your open scene to an AssetBundle and copies the file to the Skater XL custom maps directory in My Documents, ready to play! You can also override the export name and delete previous versions in the maps directory using the tools window.
 
-![ExportTool](https://i.imgur.com/afqJXVK.jpg)
+![ExportTool](https://i.imgur.com/XsucTZB.jpg) ![ToolsWindow](https://i.imgur.com/Aq03PLn.jpg)
 
 ### GrindSurface
 This component aims to streamline the creation of grindable objects, including generation of primitive colliders. 
