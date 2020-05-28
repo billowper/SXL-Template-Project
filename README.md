@@ -2,7 +2,7 @@
 Unity template project and a collection of tools for Skater XL custom map creation.
 
 ## Requirements
-* Unity 2018.4.12f1
+* Unity 2018.4.17f1 (I use 4.23f1 and it's fine)
 * Skater XL
 
 ## Features
