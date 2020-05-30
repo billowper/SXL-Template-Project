@@ -46,8 +46,11 @@ public class GrindSplineEditor : Editor
                         $"Space : Confirm\n" +
                         $"Escape : Cancel";
 
-            Handles.Label(nearestVert + Vector3.up, label, new GUIStyle("whiteLabel") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, 0.25f, EventType.Repaint);
-            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, 0.15f, EventType.Repaint);
+            var offset = Vector3.up * Mathf.Lerp(0.1f, 1f, Mathf.Clamp01(SceneView.currentDrawingSceneView.cameraDistance / 4));
+            var radius = Mathf.Lerp(0.005f, 0.03f, Mathf.Clamp01(SceneView.currentDrawingSceneView.cameraDistance / 10));
+
+            Handles.Label(nearestVert + offset, label, new GUIStyle("whiteLabel") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});           
+            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, radius, EventType.Repaint);
 
             if (Event.current == null)
                 return;
