@@ -28,7 +28,7 @@ public class GrindSplineEditor : Editor
         {
             HandleUtility.AddDefaultControl(GetHashCode());
 
-            var pick_new_vert = GrindSplineUtils.PickNearestVertexToCursor(out var pos, 0.15f);
+            var pick_new_vert = GrindSplineUtils.PickNearestVertexToCursor(out var pos);
             
             if (pick_new_vert)
                 nearestVert = pos;

@@ -154,7 +154,7 @@ public class GrindSurfaceEditor : Editor
 
             HandleUtility.AddDefaultControl(GetHashCode());
 
-            var pick_new_vert = GrindSplineUtils.PickNearestVertexToCursor(out var pos, 0.15f, grindSurface.transform);
+            var pick_new_vert = GrindSplineUtils.PickNearestVertexToCursor(out var pos, 0, grindSurface.transform);
             
             if (pick_new_vert)
                 nearestVert = pos;
