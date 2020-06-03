@@ -71,6 +71,16 @@ public class GrindSurfaceEditor : Editor
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliderWidth"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliderDepth"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("IsEdge"));
+
+                if (serializedObject.FindProperty("IsEdge").boolValue)
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("AutoDetectEdgeAlignment"));
+
+                    if (serializedObject.FindProperty("AutoDetectEdgeAlignment").boolValue == false)
+                    {
+                        EditorGUILayout.PropertyField(serializedObject.FindProperty("FlipEdge"));
+                    }
+                }
             }
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderContainer"));

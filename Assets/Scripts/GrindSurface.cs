@@ -20,6 +20,8 @@ public class GrindSurface : MonoBehaviour
     public float GeneratedColliderWidth = 0.1f;
     public float GeneratedColliderDepth = 0.05f;
     public bool IsEdge;
+    public bool AutoDetectEdgeAlignment;
+    public bool FlipEdge;
 
     private bool flipEdgeOffset;
 
@@ -71,27 +73,31 @@ public class GrindSurface : MonoBehaviour
     {
         if (IsEdge)
         {
-            var left = false;
-            
-            var a = spline.transform.GetChild(0).position;
-            var b = spline.transform.GetChild(1).position;
-
-            var dir = a - b;
-            var right = Vector3.Cross(dir.normalized, Vector3.up);
-            var test_pos = a + (right * GeneratedColliderWidth);
-
-            foreach (var t in test_cols)
+            if (AutoDetectEdgeAlignment)
             {
-                // if this ray doesnt hit anything then the ledge is to our left
+                var left = false;
 
-                if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false)
+                var a = spline.transform.GetChild(0).position;
+                var b = spline.transform.GetChild(1).position;
+
+                var dir = a - b;
+                var right = Vector3.Cross(dir.normalized, Vector3.up);
+                var test_pos = a + (right * GeneratedColliderWidth);
+
+                foreach (var t in test_cols)
                 {
-                    left = true;
-                }
-            }
+                    // if this ray doesnt hit anything then the ledge is to our left
 
-            if (left)
-                return true;
+                    if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false)
+                    {
+                        left = true;
+                    }
+                }
+
+                return left;
+            }
+            
+            return FlipEdge;
         }
 
         return false;
