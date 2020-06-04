@@ -146,22 +146,6 @@ public class GrindSurfaceEditor : Editor
     {
         if (drawSplines)
         {
-            /*
-            Handles.BeginGUI();
-            {
-                var r = new Rect(10, SceneView.currentDrawingSceneView.camera.pixelHeight - 30*3 + 10, 400, 30*3);
-
-                GUILayout.BeginArea(r);
-                GUILayout.BeginVertical(new GUIStyle("box"));
-                GUILayout.Label($"<color=white>Shift + LMB = Add Point/Create New Spline\n" +
-                                $"SPACE = Confirm Spline\n" +
-                                $"ESC = Stop Drawing/Clear Active Spline</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
-                GUILayout.EndVertical();
-                GUILayout.EndArea();
-            }
-            Handles.EndGUI();
-            */
-
             HandleUtility.AddDefaultControl(GetHashCode());
 
             var pick_new_vert = GrindSplineUtils.PickNearestVertexToCursor(out var pos, 0, grindSurface.transform);
@@ -175,7 +159,7 @@ public class GrindSurfaceEditor : Editor
 
             if (activeSpline != null && activeSpline.transform.childCount > 0)
             {
-                Handles.DrawLine(activeSpline.transform.GetChild(activeSpline.transform.childCount - 1).position, nearestVert);
+                Handles.DrawAAPolyLine(3f, activeSpline.transform.GetChild(activeSpline.transform.childCount - 1).position, nearestVert);
             }
 
             var label = (activeSpline != null ? "Shift Click : Add Point\n" : "Shift + LMB : Create Grind\n") +
@@ -183,10 +167,9 @@ public class GrindSurfaceEditor : Editor
                         $"Escape : {(activeSpline == null ? "Exit Drawing Mode" : "Cancel")}";
             
             var offset = Vector3.up * Mathf.Lerp(0.1f, 1f, Mathf.Clamp01(SceneView.currentDrawingSceneView.cameraDistance / 4));
-            var radius = Mathf.Lerp(0.005f, 0.03f, Mathf.Clamp01(SceneView.currentDrawingSceneView.cameraDistance / 10));
 
             Handles.Label(nearestVert + offset, label, new GUIStyle("whiteLabel") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
-            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, radius, EventType.Repaint);
+            Handles.CircleHandleCap(0, nearestVert, Quaternion.LookRotation(SceneView.currentDrawingSceneView.camera.transform.forward), 0.02f, EventType.Repaint);
 
             if (Event.current == null)
                 return;

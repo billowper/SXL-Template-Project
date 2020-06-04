@@ -39,7 +39,7 @@ public class GrindSplineEditor : Editor
 
             if (grindSpline.transform.childCount > 0)
             {
-                Handles.DrawLine(grindSpline.transform.GetChild(grindSpline.transform.childCount - 1).position, nearestVert);
+                Handles.DrawAAPolyLine(3f, grindSpline.transform.GetChild(grindSpline.transform.childCount - 1).position, nearestVert);
             }
 
             var label = "Shift Click : Add Point\n" +
@@ -47,10 +47,9 @@ public class GrindSplineEditor : Editor
                         $"Escape : Cancel";
 
             var offset = Vector3.up * Mathf.Lerp(0.1f, 1f, Mathf.Clamp01(SceneView.currentDrawingSceneView.cameraDistance / 4));
-            var radius = Mathf.Lerp(0.005f, 0.03f, Mathf.Clamp01(SceneView.currentDrawingSceneView.cameraDistance / 10));
 
             Handles.Label(nearestVert + offset, label, new GUIStyle("whiteLabel") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});           
-            Handles.SphereHandleCap(0, nearestVert, Quaternion.identity, radius, EventType.Repaint);
+            Handles.CircleHandleCap(0, nearestVert, Quaternion.LookRotation(SceneView.currentDrawingSceneView.camera.transform.forward), 0.02f, EventType.Repaint);
 
             if (Event.current == null)
                 return;

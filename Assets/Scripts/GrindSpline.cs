@@ -34,8 +34,8 @@ public class GrindSpline : MonoBehaviour
         {
             var child = transform.GetChild(i);
 
-            Gizmos.DrawWireSphere(child.transform.position, 0.05f);
-
+            Gizmos.DrawWireCube(child.transform.position, Vector3.one * 0.05f);
+            
             if (i + 1 < transform.childCount)
             {
                 Gizmos.DrawLine(child.transform.position, transform.GetChild(i + 1).position);
