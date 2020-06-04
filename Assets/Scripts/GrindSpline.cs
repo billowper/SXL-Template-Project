@@ -18,7 +18,7 @@ public class GrindSpline : MonoBehaviour
 
     private void OnValidate()
     {
-        var proper_name = $"GrindSpline_{SurfaceType}{(IsRound ? "_Round" : "")}";
+        var proper_name = $"GrindSpline_Grind_{SurfaceType}{(IsRound ? "_Round" : "")}";
 
         if (gameObject.name.Contains(proper_name) == false || IsRound == false && gameObject.name.Contains("_Round"))
         {

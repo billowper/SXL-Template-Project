@@ -113,16 +113,7 @@ public class GrindSurface : MonoBehaviour
         go.transform.position = pointA;
         go.transform.LookAt(pointB);
         go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform);
-
-        switch (spline.SurfaceType)
-        {
-            case GrindSpline.SurfaceTypes.Concrete:
-                go.tag = "Grind_Concrete";
-                break;
-            case GrindSpline.SurfaceTypes.Metal:
-                go.tag = "Grind_Metal";
-                break;
-        }
+        go.tag = $"Grind_{spline.SurfaceType}";
 
         var length = Vector3.Distance(pointA, pointB);
 
