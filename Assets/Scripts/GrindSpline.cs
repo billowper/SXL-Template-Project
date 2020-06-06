@@ -34,11 +34,34 @@ public class GrindSpline : MonoBehaviour
         {
             var child = transform.GetChild(i);
 
+            Gizmos.color = gizmoColor;
             Gizmos.DrawWireCube(child.transform.position, Vector3.one * 0.05f);
             
             if (i + 1 < transform.childCount)
             {
-                Gizmos.DrawLine(child.transform.position, transform.GetChild(i + 1).position);
+                if (Selection.activeGameObject == child.gameObject && i > 0)
+                {
+                    var offset = Vector3.up * 0.05f;
+
+                    Gizmos.color = Color.cyan;
+
+                    var dir = (transform.GetChild(i + 1).position + offset) - (child.position + offset);
+                    Gizmos.DrawRay(child.position + offset, dir);
+
+                    var prev_dir = (child.position + offset) - (transform.GetChild(i - 1).position + offset);
+                    Gizmos.DrawRay(child.position + offset, prev_dir);
+
+                    var angle = Vector3.Angle(dir, prev_dir);
+
+                    Handles.Label(Vector3.Lerp(child.position, transform.GetChild(i + 1).position, 0.5f), $"angle = {angle}");
+                }
+                else
+                {
+
+                    Gizmos.color = gizmoColor;
+                    Gizmos.DrawLine(child.position, transform.GetChild(i + 1).position);
+
+                }
             }
         }
     }

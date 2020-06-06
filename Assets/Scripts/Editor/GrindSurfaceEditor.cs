@@ -31,6 +31,7 @@ public class GrindSurfaceEditor : Editor
             EditorGUILayout.LabelField("Splines", EditorStyles.boldLabel);
 
             EditorGUILayout.BeginHorizontal();
+
             if (GUILayout.Button("Add GrindSpline"))
             {
                 CreateSpline();
@@ -39,6 +40,15 @@ public class GrindSurfaceEditor : Editor
             }
 
             drawSplines = GUILayout.Toggle(drawSplines, new GUIContent("Draw GrindSplines"), new GUIStyle("button"));
+
+            
+            if (GUILayout.Button("Generate Splines"))
+            {
+                GrindSplineGenerator.Generate(grindSurface);
+
+                serializedObject.UpdateIfRequiredOrScript();
+            }
+
             EditorGUILayout.EndHorizontal();
 
             EditorGUI.indentLevel++;

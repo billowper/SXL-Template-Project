@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public static class GrindSplineUtils
@@ -54,7 +55,7 @@ public static class GrindSplineUtils
         Undo.RegisterCreatedObjectUndo(go, "GrindSpline.AddPoint");
     }
 
-    public static void AddPoint(GrindSpline spline, Vector3 position)
+    public static GameObject AddPoint(GrindSpline spline, Vector3 position)
     {
         var p = spline.transform;
         var n = p.childCount;
@@ -64,6 +65,8 @@ public static class GrindSplineUtils
         go.transform.SetParent(p);
 
         Undo.RegisterCreatedObjectUndo(go, "GrindSpline.AddPoint");
+
+        return go;
     }
 
     public static bool PickNearestVertexToCursor(out Vector3 position, float radius = 0, Transform parent = null)
@@ -114,6 +117,29 @@ public static class GrindSplineUtils
             if (d < best_distance)
             {
                 best = w;
+                best_distance = d;
+            }
+        }
+
+        return best;
+    }
+
+    public static Vector3 GetNearestVertex(List<Vector3> vertices, Vector3 reference_point)
+    {
+        if (vertices.Contains(reference_point))
+            vertices.Remove(reference_point);
+
+        var best = Vector3.zero;
+        var best_distance = Mathf.Infinity;
+
+        for (var i = 0; i < vertices.Count; i++)
+        {
+            var p = vertices[i];
+            var d = Vector3.Distance(p, reference_point);
+
+            if (d < best_distance)
+            {
+                best = p;
                 best_distance = d;
             }
         }
