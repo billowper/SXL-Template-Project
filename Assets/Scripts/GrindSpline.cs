@@ -1,7 +1,10 @@
 ﻿using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class GrindSpline : MonoBehaviour
 {
@@ -14,6 +17,8 @@ public class GrindSpline : MonoBehaviour
     [FormerlySerializedAs("GrindType")] public SurfaceTypes SurfaceType;
     public bool IsRound;
     public bool IsCoping;
+
+#if UNITY_EDITOR
 
     private Color gizmoColor = Color.green;
 
@@ -55,4 +60,7 @@ public class GrindSpline : MonoBehaviour
             }
         }
     }
+
+#endif
+
 }
