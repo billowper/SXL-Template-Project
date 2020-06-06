@@ -15,7 +15,7 @@ public static class GrindSplineGenerator
     private static List<Vector3> searchBuffer = new List<Vector3>();
 
     public static float PointTestOffset = 0.1f;
-    public static float PointTestRadius = 0.1f;
+    public static float PointTestRadius = 0.05f;
     public static float MaxHorizontalAngle = 15f;
     public static float MaxSlope = 60f;
 
@@ -276,7 +276,12 @@ public static class GrindSplineGenerator
     {
         var m = Vector3.Lerp(current, next, 0.5f);
 
-        return IsValidPotentialVertex(m);
+        if (Physics.CheckBox(m, Vector3.one * PointTestRadius))
+        {
+            return true;
+        }
+
+        return false;
     }
     
     private static bool CheckHorizontalAngle(Vector3 previous, Vector3 current, Vector3 next)
@@ -333,14 +338,11 @@ public static class GrindSplineGenerator
 
     private static bool IsValidPotentialVertex(Vector3 v)
     {
-        var offset = 0.1f;
-        var radius = 0.05f;
-
         bool test_dir(Vector3 dir)
         {
-            var t = v + (dir * offset);
+            var t = v + (dir * PointTestOffset);
 
-            if (Physics.CheckBox(t, Vector3.one * radius))
+            if (Physics.CheckBox(t, Vector3.one * PointTestRadius))
             {
                 Debug.DrawLine(v, t, Color.red, 0.2f);
                 return false;

@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -28,39 +29,29 @@ public class GrindSpline : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        var selected = Selection.gameObjects.Contains(gameObject);
+
+        gizmoColor.a = selected ? 1f : 0.5f;
+
         Gizmos.color = gizmoColor;
 
         for (int i = 0; i < transform.childCount; i++)
         {
             var child = transform.GetChild(i);
 
-            Gizmos.color = gizmoColor;
             Gizmos.DrawWireCube(child.position, Vector3.one * 0.05f);
             
             if (i + 1 < transform.childCount)
             {
-                if (Selection.activeGameObject == child.gameObject && i > 0)
+                if (selected)
                 {
-                    var current = child.position;
-                    var next = transform.GetChild(i + 1).position;
-                    var prev = transform.GetChild(i - 1).position;
-
-                    var dir = next - current;
-
-                    next.y = 0;
-                    current.y = 0;
-                    prev.y = 0;
-
-                    var flat_dir = next - current;
-                    var v_angle = Vector3.Angle(dir, flat_dir);
-                    var prev_dir = current - prev;
-                    var h_angle = Vector3.Angle(flat_dir, prev_dir);
-
-                    Handles.Label(Vector3.Lerp(child.position, transform.GetChild(i + 1).position, 0.5f), $"h_angle = {h_angle} v_angle = {v_angle}");
+                    Handles.color = gizmoColor;
+                    Handles.DrawAAPolyLine(5f, child.position, transform.GetChild(i + 1).position);
                 }
-
-                Gizmos.color = gizmoColor;
-                Gizmos.DrawLine(child.position, transform.GetChild(i + 1).position);
+                else
+                {
+                    Gizmos.DrawLine(child.position, transform.GetChild(i + 1).position);
+                }
             }
         }
     }

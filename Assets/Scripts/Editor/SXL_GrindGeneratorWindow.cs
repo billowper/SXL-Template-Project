@@ -42,7 +42,7 @@ public class SXL_GrindGeneratorWindow : EditorWindow
 
                 EditorGUILayout.LabelField("Default Surface Settings", EditorStyles.boldLabel);
                 gsDefault_IsEdge = EditorGUILayout.Toggle("Is Edge", gsDefault_IsEdge);
-                gsDefault_AutoDetectEdgeAlignment = EditorGUILayout.Toggle("Auto Detect Edge Alignment", gsDefault_AutoDetectEdgeAlignment);
+                gsDefault_AutoDetectEdgeAlignment = EditorGUILayout.Toggle("Auto Edge Alignment", gsDefault_AutoDetectEdgeAlignment);
                 gsDefault_ColliderType = (GrindSurface.ColliderTypes) EditorGUILayout.EnumPopup("Collider Type", gsDefault_ColliderType);
                 
                 if (EditorGUI.EndChangeCheck())
@@ -56,7 +56,7 @@ public class SXL_GrindGeneratorWindow : EditorWindow
 
             EditorGUILayout.BeginVertical(new GUIStyle("box"));
             {
-                EditorGUILayout.LabelField("Generation", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("Generation Settings", EditorStyles.boldLabel);
 
                 EditorGUI.BeginChangeCheck();
 
@@ -78,30 +78,51 @@ public class SXL_GrindGeneratorWindow : EditorWindow
                     GrindSplineGenerator.MaxSlope = settings_MaxSlope;
                 }
 
+            }
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginVertical(new GUIStyle("box"));
+            {
                 EditorGUILayout.LabelField("Selected Object", Selection.activeGameObject?.name);
 
                 if (Selection.activeGameObject != null)
                 {
-                    var surface = Selection.activeGameObject.GetComponent<GrindSurface>();
-                    if (surface == null)
+                    var box_col = Selection.activeGameObject.GetComponent<BoxCollider>();
+                    if (box_col != null && box_col.transform.parent.GetComponent<GrindSurface>())
                     {
-                        EditorGUILayout.LabelField($"<i>No GrindSurface found</i>");
-
-                        if (GUILayout.Button("Generate Grind Surface"))
+                        if (GUILayout.Button("Flip Edge Collider Offset"))
                         {
-                            surface = Selection.activeGameObject.AddComponent<GrindSurface>();
+                            var c = box_col.center;
 
-                            surface.IsEdge = gsDefault_IsEdge;
-                            surface.AutoDetectEdgeAlignment = gsDefault_AutoDetectEdgeAlignment;
-                            surface.ColliderType = gsDefault_ColliderType;
+                            c.x = c.x * -1f;
 
-                            GrindSplineGenerator.Generate(surface);
+                            box_col.center = c;
                         }
+                    }
+                    else
+                    {
+
+                        var surface = Selection.activeGameObject.GetComponent<GrindSurface>() ?? Selection.activeGameObject.transform.GetComponentInParent<GrindSurface>();
+                        if (surface == null)
+                        {
+                            EditorGUILayout.LabelField($"<i>No GrindSurface found</i>", new GUIStyle("label") {richText = true});
+
+                            if (GUILayout.Button("Generate Grind Surface"))
+                            {
+                                surface = Selection.activeGameObject.AddComponent<GrindSurface>();
+
+                                surface.IsEdge = gsDefault_IsEdge;
+                                surface.AutoDetectEdgeAlignment = gsDefault_AutoDetectEdgeAlignment;
+                                surface.ColliderType = gsDefault_ColliderType;
+
+                                GrindSplineGenerator.Generate(surface);
+                            }
+                        }
+
                     }
                 }
             }
             EditorGUILayout.EndVertical();
-
         }
         EditorGUILayout.EndVertical();
     }

@@ -142,12 +142,14 @@ public class GrindSurface : MonoBehaviour
     {
         foreach (var c in GeneratedColliders)
         {
-            DestroyImmediate(c.gameObject);
+            if (c != null) 
+                DestroyImmediate(c.gameObject);
         }
 
         foreach (var s in Splines)
         {
-            DestroyImmediate(s.gameObject);
+            if (s != null) 
+                DestroyImmediate(s.gameObject);
         }
 
         GeneratedColliders.Clear();
