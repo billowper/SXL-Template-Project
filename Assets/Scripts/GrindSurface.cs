@@ -137,4 +137,20 @@ public class GrindSurface : MonoBehaviour
         
         return go.GetComponent<Collider>();
     }
+
+    public void DestroySplines()
+    {
+        foreach (var c in GeneratedColliders)
+        {
+            DestroyImmediate(c.gameObject);
+        }
+
+        foreach (var s in Splines)
+        {
+            DestroyImmediate(s.gameObject);
+        }
+
+        GeneratedColliders.Clear();
+        Splines.Clear();
+    }
 }

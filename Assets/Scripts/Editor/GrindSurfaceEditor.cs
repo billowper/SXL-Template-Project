@@ -110,18 +110,7 @@ public class GrindSurfaceEditor : Editor
         {
             if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
             {
-                foreach (var c in grindSurface.GeneratedColliders)
-                {
-                    DestroyImmediate(c.gameObject);
-                }
-
-                foreach (var s in grindSurface.Splines)
-                {
-                    DestroyImmediate(s.gameObject);
-                }
-
-                grindSurface.GeneratedColliders.Clear();
-                grindSurface.Splines.Clear();
+                grindSurface.DestroySplines();
 
                 serializedObject.UpdateIfRequiredOrScript();
 

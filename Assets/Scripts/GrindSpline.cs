@@ -35,33 +35,32 @@ public class GrindSpline : MonoBehaviour
             var child = transform.GetChild(i);
 
             Gizmos.color = gizmoColor;
-            Gizmos.DrawWireCube(child.transform.position, Vector3.one * 0.05f);
+            Gizmos.DrawWireCube(child.position, Vector3.one * 0.05f);
             
             if (i + 1 < transform.childCount)
             {
                 if (Selection.activeGameObject == child.gameObject && i > 0)
                 {
-                    var offset = Vector3.up * 0.05f;
+                    var current = child.position;
+                    var next = transform.GetChild(i + 1).position;
+                    var prev = transform.GetChild(i - 1).position;
 
-                    Gizmos.color = Color.cyan;
+                    var dir = next - current;
 
-                    var dir = (transform.GetChild(i + 1).position + offset) - (child.position + offset);
-                    Gizmos.DrawRay(child.position + offset, dir);
+                    next.y = 0;
+                    current.y = 0;
+                    prev.y = 0;
 
-                    var prev_dir = (child.position + offset) - (transform.GetChild(i - 1).position + offset);
-                    Gizmos.DrawRay(child.position + offset, prev_dir);
+                    var flat_dir = next - current;
+                    var v_angle = Vector3.Angle(dir, flat_dir);
+                    var prev_dir = current - prev;
+                    var h_angle = Vector3.Angle(flat_dir, prev_dir);
 
-                    var angle = Vector3.Angle(dir, prev_dir);
-
-                    Handles.Label(Vector3.Lerp(child.position, transform.GetChild(i + 1).position, 0.5f), $"angle = {angle}");
+                    Handles.Label(Vector3.Lerp(child.position, transform.GetChild(i + 1).position, 0.5f), $"h_angle = {h_angle} v_angle = {v_angle}");
                 }
-                else
-                {
 
-                    Gizmos.color = gizmoColor;
-                    Gizmos.DrawLine(child.position, transform.GetChild(i + 1).position);
-
-                }
+                Gizmos.color = gizmoColor;
+                Gizmos.DrawLine(child.position, transform.GetChild(i + 1).position);
             }
         }
     }

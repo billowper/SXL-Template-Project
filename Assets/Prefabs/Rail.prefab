@@ -21095,7 +21095,7 @@ GameObject:
   - component: {fileID: 5385652297259567714}
   - component: {fileID: 5385652297259567713}
   m_Layer: 0
-  m_Name: GrindSpline_Metal_Round
+  m_Name: GrindSpline_Grind_Metal_Round
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

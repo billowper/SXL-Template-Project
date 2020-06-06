@@ -19,13 +19,26 @@ public static class GrindSplineUtils
     [MenuItem("SXL/Add GrindSurface")]   
     private static void AddGrindSurface()
     {
-        Selection.activeGameObject.AddComponent<GrindSurface>();
+        foreach (var o in Selection.gameObjects)
+        {
+            var surface = o.GetComponent<GrindSurface>();
+            if (surface == null)
+                surface = o.AddComponent<GrindSurface>();
+            else
+                surface.DestroySplines();
+
+            surface.IsEdge = EditorPrefs.GetBool("gsDefault_IsEdge");
+            surface.AutoDetectEdgeAlignment = EditorPrefs.GetBool("gsDefault_AutoDetectEdgeAlignment");
+            surface.ColliderType = (GrindSurface.ColliderTypes) EditorPrefs.GetInt("gsDefault_ColliderType");
+
+            GrindSplineGenerator.Generate(surface);
+        }
     }
 
     [MenuItem("SXL/Add GrindSurface %g", true)]   
     private static bool AddGrindSurface_Validator()
     {
-        return Selection.gameObjects.Length == 1 && Selection.activeGameObject.GetComponent<GrindSurface>() == null;
+        return Selection.gameObjects.Length > 0;
     }
 
     private static void CreateObjectWithComponent<T>(string name)
@@ -117,29 +130,6 @@ public static class GrindSplineUtils
             if (d < best_distance)
             {
                 best = w;
-                best_distance = d;
-            }
-        }
-
-        return best;
-    }
-
-    public static Vector3 GetNearestVertex(List<Vector3> vertices, Vector3 reference_point)
-    {
-        if (vertices.Contains(reference_point))
-            vertices.Remove(reference_point);
-
-        var best = Vector3.zero;
-        var best_distance = Mathf.Infinity;
-
-        for (var i = 0; i < vertices.Count; i++)
-        {
-            var p = vertices[i];
-            var d = Vector3.Distance(p, reference_point);
-
-            if (d < best_distance)
-            {
-                best = p;
                 best_distance = d;
             }
         }

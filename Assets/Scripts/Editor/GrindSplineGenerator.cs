@@ -12,6 +12,12 @@ public static class GrindSplineGenerator
     private static List<Vector3> searchList = new List<Vector3>();
     private static List<Vector3> blockedPoints = new List<Vector3>();
     private static List<Vector3> activeSplinePoints = new List<Vector3>();
+    private static List<Vector3> searchBuffer = new List<Vector3>();
+
+    public static float PointTestOffset = 0.1f;
+    public static float PointTestRadius = 0.1f;
+    public static float MaxHorizontalAngle = 15f;
+    public static float MaxSlope = 60f;
 
     public static void Generate(GrindSurface surface)
     {
@@ -36,45 +42,6 @@ public static class GrindSplineGenerator
             }
         }
 
-        bool GetValidStartPoint(out Vector3 pt)
-        {
-            RefreshSearchList();
-
-            var filter = new List<Vector3>();
-
-            if (searchList.Count > 1)
-            {
-                foreach (var p in searchList)
-                {
-                    foreach (var other in searchList)
-                    {
-                        if (other == p)
-                            continue;
-                        
-                        if (surface.Splines.Any(s =>
-                        {
-                            var pts = s.GetComponentsInChildren<Transform>().Select(t => t.position).ToArray();
-                            return pts.Contains(p) && pts.Contains(other);
-                        }))
-                        {
-                            continue;
-                        }
-
-                        filter.Add(p);
-                    }
-                }
-            }
-
-            if (filter.Count > 0)
-            {
-                pt = filter[0];
-                return true;
-            }
-
-            pt = default;
-            return false;
-        }
-
         Debug.Log($"Found {vertices.Count} potential valid vertices in child meshes.");
 
         // start a grind spline by picking a valid vertex
@@ -88,7 +55,6 @@ public static class GrindSplineGenerator
         vertices.RemoveAt(0);
 
         endPoints.Add(start);
-        activeSplinePoints.Add(start);
         
         AddSplinePoint(active_spline, start);
         
@@ -105,22 +71,17 @@ public static class GrindSplineGenerator
 
             // find nearest vert for our next spline point
 
-            var nearst_vert = GrindSplineUtils.GetNearestVertex(searchList, current_point);
             var previous_point = current_index > 0 ? active_spline.transform.GetChild(current_index - 1) : null;
 
-            if (previous_point == null || CheckAngle(previous_point.position, current_point, nearst_vert) && CheckMidPoint(current_point, nearst_vert))
+            if (TryGetNextValidPoint(surface, out var next_point, current_point, previous_point?.position))
             {
-                if (vertices.Contains(nearst_vert))
-                    vertices.Remove(nearst_vert);
+                if (vertices.Contains(next_point))
+                    vertices.Remove(next_point);
 
-                AddSplinePoint(active_spline, nearst_vert);
+                AddSplinePoint(active_spline, next_point);
 
-                activeSplinePoints.Add(nearst_vert);
-
-                current_point = nearst_vert;
+                current_point = next_point;
                 current_index++;
-
-                Debug.Log($"Add spline point at {nearst_vert}");
             }
 
             // if we failed to find a valid next point, but still have verts left, lets create a new spline
@@ -136,7 +97,7 @@ public static class GrindSplineGenerator
 
                 activeSplinePoints.Clear();
 
-                if (GetValidStartPoint(out var pt))
+                if (CanFindValidStartPoint(surface, out var pt))
                 {
                     current_point = pt;
 
@@ -152,12 +113,7 @@ public static class GrindSplineGenerator
 
                     active_spline = CreateSpline(surface, current_point);
 
-                    activeSplinePoints.Clear();
-                    activeSplinePoints.Add(current_point);
-
                     AddSplinePoint(active_spline, current_point);
-
-                    Debug.Log($"Creating new spline at {current_point}, searchList size is = {searchList.Count}");
                 }
                 else
                 {
@@ -172,6 +128,135 @@ public static class GrindSplineGenerator
                 }
             }
         }
+
+        surface.GenerateColliders();
+    }
+
+    private static bool TryGetNextValidPoint(GrindSurface surface, out Vector3 best, Vector3 reference_point, Vector3? previous_point)
+    {
+        searchBuffer.Clear();
+
+        foreach (var other in searchList)
+        {
+            if (other == reference_point)
+                continue;
+
+            // if any spline contains both p and other, then p is not valid
+
+            var both_points_in_spline = false;
+
+            foreach (var spline in surface.Splines)
+            {
+                if (spline.ContainsPosition(reference_point) && spline.ContainsPosition(other))
+                {
+                    both_points_in_spline = true;
+                    break;
+                }
+            }
+
+            if (both_points_in_spline)
+                continue;
+
+            if (CheckVerticalAngle(reference_point, other) == false)
+                continue;
+
+            if (previous_point.HasValue && CheckHorizontalAngle(previous_point.Value, reference_point, other) == false)
+                continue;
+
+            if (CheckMidPoint(reference_point, other) == false)
+                continue;
+
+            searchBuffer.Add(other);
+        }
+
+        if (searchBuffer.Contains(reference_point))
+            searchBuffer.Remove(reference_point);
+
+        best = Vector3.zero;
+
+        if (searchBuffer.Count == 0)
+        {
+            return false;
+        }
+
+        var best_distance = Mathf.Infinity;
+
+        for (var i = 0; i < searchBuffer.Count; i++)
+        {
+            var p = searchBuffer[i];
+            var d = Vector3.Distance(p, reference_point);
+
+            if (d < best_distance)
+            {
+                best = p;
+                best_distance = d;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool CanFindValidStartPoint(GrindSurface surface, out Vector3 pt)
+    {
+        // points are valid if
+        // - in vertices list (thus un-used by any existing splines)
+        // - or in end points
+        // AND
+        // - not blocked (e.g. used by 2 existing splines)
+        // - not in active spline
+        
+        // additionally, a point is only valid if we can construct a new, unique spline using other valid point
+        // so we filter each potential point from the search list
+        // checking that there are no existing splines which contain that point and any other point in the searach list
+
+        RefreshSearchList();
+
+        var filter = new List<Vector3>();
+
+        if (searchList.Count > 1)
+        {
+            foreach (var p in searchList)
+            {
+                foreach (var other in searchList)
+                {
+                    if (other == p)
+                        continue;
+
+                    // if any spline contains both p and other, then p is not valid
+
+                    var both_points_in_spline = false;
+
+                    foreach (var spline in surface.Splines)
+                    {
+                        if (spline.ContainsPosition(p) && spline.ContainsPosition(other))
+                        {
+                            both_points_in_spline = true;
+                            break;
+                        }
+                    }
+
+                    if (both_points_in_spline)
+                        continue;
+
+                    filter.Add(p);
+                }
+            }
+        }
+
+        if (filter.Count > 0)
+        {
+            pt = filter[0];
+            return true;
+        }
+
+        pt = default;
+        return false;
+    }
+
+    private static bool ContainsPosition(this GrindSpline spline, Vector3 world_point)
+    {
+        var points = spline.GetComponentsInChildren<Transform>();
+        return points.Any(p => p.position == world_point);
     }
 
     private static void RefreshSearchList()
@@ -194,18 +279,30 @@ public static class GrindSplineGenerator
         return IsValidPotentialVertex(m);
     }
     
-    private static bool CheckAngle(Vector3 previous, Vector3 current, Vector3 next)
+    private static bool CheckHorizontalAngle(Vector3 previous, Vector3 current, Vector3 next)
     {
-        // "valid" means within a reasonable angle threshold in any direction, 
-        // relative to the direction from our previous point
+        next.y = 0;
+        current.y = 0;
+        previous.y = 0;
 
-        const float max_angle = 15f;
-        
-        var dir = next - current;
+        var flat_dir = next - current;
         var prev_dir = current - previous;
-        var angle = Vector3.Angle(dir, prev_dir);
+        var h_angle = Vector3.Angle(flat_dir, prev_dir);
 
-        return angle < max_angle;
+        return h_angle <= MaxHorizontalAngle;
+    }
+
+    private static bool CheckVerticalAngle(Vector3 current, Vector3 next)
+    {
+        var dir = next - current;
+
+        next.y = 0;
+        current.y = 0;
+
+        var flat_dir = next - current;
+        var v_angle = Vector3.Angle(dir, flat_dir);
+
+        return v_angle <= MaxSlope;
     }
 
     private static void AddSplinePoint(GrindSpline spline, Vector3 world_position)
@@ -216,6 +313,8 @@ public static class GrindSplineGenerator
 
         go.transform.position = world_position;
         go.transform.SetParent(spline.transform);
+
+        activeSplinePoints.Add(world_position);
     }
 
     private static GrindSpline CreateSpline(GrindSurface surface, Vector3 world_position)
@@ -243,11 +342,11 @@ public static class GrindSplineGenerator
 
             if (Physics.CheckBox(t, Vector3.one * radius))
             {
-                Debug.DrawLine(v, t, Color.red, 1f);
+                Debug.DrawLine(v, t, Color.red, 0.2f);
                 return false;
             }
             
-            Debug.DrawLine(v, t, Color.green, 1f);
+            Debug.DrawLine(v, t, Color.green, 0.2f);
             return true;
         }
 
