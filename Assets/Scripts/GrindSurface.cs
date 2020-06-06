@@ -31,6 +31,16 @@ public class GrindSurface : MonoBehaviour
         {
             Splines.AddRange(GetComponentsInChildren<GrindSpline>());
         }
+
+        for (var index = Splines.Count - 1; index >= 0; index--)
+        {
+            var s = Splines[index];
+
+            if (s == null)
+            {
+                Splines.RemoveAt(index);
+            }
+        }
     }
 
     public void GenerateColliders()

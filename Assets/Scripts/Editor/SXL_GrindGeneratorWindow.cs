@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 public class SXL_GrindGeneratorWindow : EditorWindow
@@ -30,6 +31,18 @@ public class SXL_GrindGeneratorWindow : EditorWindow
         settings_PointTestRadius = EditorPrefs.GetFloat(nameof(settings_PointTestRadius), GrindSplineGenerator.PointTestRadius);
         settings_MaxHorizontalAngle = EditorPrefs.GetFloat(nameof(settings_MaxHorizontalAngle), GrindSplineGenerator.MaxHorizontalAngle);
         settings_MaxSlope = EditorPrefs.GetFloat(nameof(settings_MaxSlope), GrindSplineGenerator.MaxSlope);
+
+        Selection.selectionChanged += SelectionChanged;
+    }
+
+    private void OnDisable()
+    {
+        Selection.selectionChanged -= SelectionChanged;
+    }
+
+    private void SelectionChanged()
+    {
+        Repaint();
     }
 
     private void OnGUI()

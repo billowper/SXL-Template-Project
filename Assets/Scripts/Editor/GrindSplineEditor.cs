@@ -15,6 +15,14 @@ public class GrindSplineEditor : Editor
         }
 
         drawPoints = GUILayout.Toggle(drawPoints, "Draw Points", new GUIStyle("button"));
+
+        if (GUILayout.Button("Rename Points"))
+        {
+            foreach (Transform x in grindSpline.transform)
+            {
+                x.gameObject.name = $"Point ({x.GetSiblingIndex() + 1})";
+            }
+        }
     }
 
     private bool drawPoints;

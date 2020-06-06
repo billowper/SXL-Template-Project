@@ -117,15 +117,22 @@ public static class GrindSplineGenerator
                 }
                 else
                 {
-                    if (active_spline.transform.childCount < 2)
-                    {
-                        surface.Splines.RemoveAt(surface.Splines.Count - 1);
-
-                        Object.DestroyImmediate(active_spline.gameObject);
-                    }
-
                     active_spline = null;
                 }
+            }
+        }
+        
+        // remove any invalid splines lingering around for whatever reason
+
+        var buffer = surface.Splines.ToArray();
+
+        foreach (var s in buffer)
+        {
+            if (s.transform.childCount <= 1)
+            {
+                surface.Splines.Remove(s);
+
+                Object.DestroyImmediate(s.gameObject);
             }
         }
 
