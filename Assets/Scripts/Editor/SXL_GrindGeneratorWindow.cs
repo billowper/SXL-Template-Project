@@ -131,7 +131,10 @@ public class SXL_GrindGeneratorWindow : EditorWindow
                                 GrindSplineGenerator.Generate(surface);
                             }
                         }
-
+                        else
+                        {
+                            EditorGUILayout.LabelField($"GrindSurface found!", new GUIStyle("label") {richText = true});
+                        }
                     }
                 }
             }

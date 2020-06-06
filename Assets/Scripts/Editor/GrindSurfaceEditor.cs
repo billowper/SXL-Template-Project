@@ -41,15 +41,20 @@ public class GrindSurfaceEditor : Editor
 
             drawSplines = GUILayout.Toggle(drawSplines, new GUIContent("Draw GrindSplines"), new GUIStyle("button"));
 
+            EditorGUILayout.EndHorizontal();
             
             if (GUILayout.Button("Generate Splines"))
             {
-                GrindSplineGenerator.Generate(grindSurface);
+                if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
+                {
+                    grindSurface.DestroySplines();
 
-                serializedObject.UpdateIfRequiredOrScript();
+                    GrindSplineGenerator.Generate(grindSurface);
+
+                    serializedObject.UpdateIfRequiredOrScript();
+                    return;
+                }
             }
-
-            EditorGUILayout.EndHorizontal();
 
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Splines"), true);
