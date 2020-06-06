@@ -13882,8 +13882,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Splines:
   - {fileID: 645303651}
-  - {fileID: 0}
-  - {fileID: 0}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 1821794285}
