@@ -45,7 +45,7 @@ public class GrindSurfaceEditor : Editor
             
             if (GUILayout.Button("Generate Splines"))
             {
-                if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
+                if (grindSurface.Splines.Count == 0 || EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
                 {
                     grindSurface.DestroySplines();
 
