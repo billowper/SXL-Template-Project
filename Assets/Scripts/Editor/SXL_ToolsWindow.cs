@@ -54,7 +54,7 @@ public class SXL_ToolsWindow : EditorWindow
     {
         canFlipBoxCollider = false;
 
-        var box_col = Selection.activeGameObject.GetComponent<BoxCollider>();
+        var box_col = Selection.activeGameObject?.GetComponent<BoxCollider>();
         if (box_col != null && FindObjectsOfType<GrindSpline>().Any(s => s.GeneratedColliders.Contains(box_col)))
             canFlipBoxCollider = true;
 
