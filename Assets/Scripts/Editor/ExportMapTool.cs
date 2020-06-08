@@ -58,7 +58,7 @@ public static class ExportMapTool
         if (!Directory.Exists(ASSET_BUNDLES_BUILD_PATH))
             Directory.CreateDirectory(ASSET_BUNDLES_BUILD_PATH);
 
-        BuildPipeline.BuildAssetBundles(ASSET_BUNDLES_BUILD_PATH, new []{ build }, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows);
+        BuildPipeline.BuildAssetBundles(ASSET_BUNDLES_BUILD_PATH, new []{ build }, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.StandaloneWindows);
 
         var map_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SkaterXL/Maps");
         var bundle_path = Path.Combine(Application.dataPath.Replace("/Assets", "/AssetBundles"), build.assetBundleName);
