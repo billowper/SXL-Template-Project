@@ -18,18 +18,20 @@ public static class ExportMapTool
     [MenuItem("SXL/Quick Map Export")]
     public static void ExportMap()
     {
-        ExportMap(null, EditorPrefs.GetBool("SXL_UseVersionNumbering", true));
+        ExportMap(null, EditorPrefs.GetBool("SXL_UseVersionNumbering", true), true);
     }
 
     public static Action<Scene> OnPreExport;
 
-    public static void ExportMap(string override_asset_bundle_name, bool use_version_numbering)
+    public static void ExportMap(string override_asset_bundle_name, bool use_version_numbering, bool strip_components)
     {
         var scene = SceneManager.GetActiveScene();
 
+        var start_time = DateTime.Now;
+
         EditorSceneManager.SaveScene(scene);
 
-        ProcessGrindsObjects(scene);
+        ProcessGrindsObjects(scene, strip_components);
 
         var bundle_name = scene.name;
 
@@ -60,6 +62,10 @@ public static class ExportMapTool
 
         BuildPipeline.BuildAssetBundles(ASSET_BUNDLES_BUILD_PATH, new []{ build }, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.StandaloneWindows);
 
+        var time_taken = start_time - DateTime.Now;
+
+        Debug.Log($"BuildAssetBundles took {time_taken:mm\\:ss}");
+
         var map_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SkaterXL/Maps");
         var bundle_path = Path.Combine(Application.dataPath.Replace("/Assets", "/AssetBundles"), build.assetBundleName);
         var dest_path = Path.Combine(map_dir, build.assetBundleName);
@@ -72,11 +78,12 @@ public static class ExportMapTool
         EditorSceneManager.OpenScene(scene.path);
     }
 
-    private static void ProcessGrindsObjects(Scene scene)
+    private static void ProcessGrindsObjects(Scene scene, bool strip_components)
     {
-        var root_objects = scene.GetRootGameObjects();
         var grind_splines = Object.FindObjectsOfType<GrindSpline>();
-        var grinds_root = root_objects.FirstOrDefault(o => o.name == "Grinds") ?? new GameObject("Grinds");
+        var grind_surfaces = Object.FindObjectsOfType<GrindSurface>();
+
+        var grinds_root = scene.GetRootGameObjects().FirstOrDefault(o => o.name == "Grinds") ?? new GameObject("Grinds");
 
         foreach (var o in grind_splines)
         {
@@ -93,6 +100,31 @@ public static class ExportMapTool
                 foreach (var c in o.GeneratedColliders)
                 {
                     c.transform.SetParent(null);
+                }
+            }
+        }
+
+        if (strip_components)
+        {
+            foreach (var gs in grind_surfaces)
+            {
+                Object.DestroyImmediate(gs);
+            }
+
+            foreach (var gs in grind_splines)
+            {
+                Object.DestroyImmediate(gs);
+            }
+
+            var missing_scripts = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Component>().Where(c => c == null)).ToArray();
+
+            if (missing_scripts.Length > 0)
+            {
+                Debug.Log($"Found {missing_scripts.Length} missing scripts which will be removed.");
+
+                foreach (var s in missing_scripts)
+                {
+                    Object.DestroyImmediate(s);
                 }
             }
         }
