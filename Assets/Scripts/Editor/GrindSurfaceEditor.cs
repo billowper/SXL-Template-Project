@@ -31,117 +31,153 @@ public class GrindSurfaceEditor : Editor
             EditorGUILayout.LabelField("Splines", EditorStyles.boldLabel);
 
             EditorGUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Add GrindSpline"))
             {
-                CreateSpline();
+                if (GUILayout.Button("Add GrindSpline"))
+                {
+                    CreateSpline();
 
-                serializedObject.UpdateIfRequiredOrScript();
+                    serializedObject.UpdateIfRequiredOrScript();
+                }
+
+                drawSplines = GUILayout.Toggle(drawSplines, new GUIContent("Draw GrindSplines"), new GUIStyle("button"));
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Separator();
+
+            EditorGUILayout.BeginVertical();
+            {
+                EditorGUILayout.LabelField("Default Spline Settings:");
+
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("SurfaceType"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("IsRound"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("IsCoping"));
+
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Separator();
+
+            GUI.enabled = grindSurface.Splines.Count > 0;
+
+            if (GUILayout.Button("Generate All Colliders"))
+            {
+                if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
+                {
+                    foreach (var s in grindSurface.Splines)
+                    {
+                        s.GenerateColliders(grindSurface.ColliderGenerationSettings);
+                    }
+                }
             }
 
-            drawSplines = GUILayout.Toggle(drawSplines, new GUIContent("Draw GrindSplines"), new GUIStyle("button"));
+            if (GUILayout.Button("Generate All Colliders (Use Generation Settings)"))
+            {
+                if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
+                {
+                    foreach (var s in grindSurface.Splines)
+                    {
+                        s.GenerateColliders(grindSurface.ColliderGenerationSettings);
+                    }
+                }
+            }
 
-            EditorGUILayout.EndHorizontal();
-            
+            if (GUILayout.Button("Destroy All & Reset"))
+            {
+                if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
+                {
+                    grindSurface.DestroySplines();
+
+                    serializedObject.UpdateIfRequiredOrScript();
+
+                    return;
+                }
+            }
+
+            GUI.enabled = true;
+
+            var splines_arr = serializedObject.FindProperty("Splines");
+            if (splines_arr.arraySize > 0)
+            {
+                EditorGUILayout.BeginVertical(new GUIStyle("box"));
+                {
+
+                    for (int i = 0; i < splines_arr.arraySize; i++)
+                    {
+                        var e = splines_arr.GetArrayElementAtIndex(i);
+                        var spline = (GrindSpline) e.objectReferenceValue;
+                        EditorGUILayout.BeginHorizontal();
+
+                        EditorGUILayout.ObjectField(spline, typeof(GrindSpline), true);
+
+                        if (GUILayout.Button("Generate Colliders"))
+                        {
+                            if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
+                            {
+                                spline.GenerateColliders();
+                            }
+                        }
+
+                        EditorGUILayout.EndHorizontal();
+                    }
+
+                }
+                EditorGUILayout.EndVertical();
+            }
+        }
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.BeginVertical(new GUIStyle("box"));
+        {
+            EditorGUILayout.LabelField("GrindSpline Generation (Experimental)", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Spline generation is an experimental feature and not yet yielding good results for complex objects. It's pretty good at basic ledges, hubbas, etc.", MessageType.Info, true);
+
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderGenerationSettings"), true);
+            EditorGUI.indentLevel--;
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderContainer"), true);
+
             if (GUILayout.Button("Generate Splines"))
             {
                 if (grindSurface.Splines.Count == 0 || EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
                 {
                     grindSurface.DestroySplines();
 
-                    GrindSplineGenerator.Generate(grindSurface);
+                    GrindSplineGenerator.Generate(grindSurface, grindSurface.ColliderGenerationSettings);
 
                     serializedObject.UpdateIfRequiredOrScript();
                     return;
                 }
             }
-
-            EditorGUI.indentLevel++;
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("Splines"), true);
-            EditorGUI.indentLevel--;
         }
         EditorGUILayout.EndVertical();
-
-        // ---------------------------- Colliders
-
-        EditorGUILayout.BeginVertical(new GUIStyle("box"));
-        {
-            EditorGUILayout.LabelField("Colliders", EditorStyles.boldLabel);
-
-            if (GUILayout.Button("Generate Colliders"))
-            {
-                grindSurface.GenerateColliders();
-            }
-
-            EditorGUILayout.Separator();
-
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderType"));
-
-            if (grindSurface.ColliderType == GrindSurface.ColliderTypes.Capsule)
-            {
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliderRadius"));
-            }
-            else
-            {
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliderWidth"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliderDepth"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("IsEdge"));
-
-                if (serializedObject.FindProperty("IsEdge").boolValue)
-                {
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty("AutoDetectEdgeAlignment"));
-
-                    if (serializedObject.FindProperty("AutoDetectEdgeAlignment").boolValue == false)
-                    {
-                        EditorGUILayout.PropertyField(serializedObject.FindProperty("FlipEdge"));
-                    }
-                }
-            }
-
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderContainer"));
-
-            EditorGUI.indentLevel++;
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliders"), true);
-            EditorGUI.indentLevel--;
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-            }
-        }
-        EditorGUILayout.EndVertical();
-        
-        if (GUILayout.Button("Destroy & Reset"))
-        {
-            if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
-            {
-                grindSurface.DestroySplines();
-
-                serializedObject.UpdateIfRequiredOrScript();
-
-                return;
-            }
-        }
 
         GUI.enabled = true;
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            serializedObject.ApplyModifiedProperties();
+        }
     }
 
     private GrindSpline CreateSpline()
     {
-        var gs = new GameObject("GrindSpline", typeof(GrindSpline));
+        var gs = new GameObject("GrindSpline", typeof(GrindSpline)).GetComponent<GrindSpline>();
+
+        gs.SurfaceType = grindSurface.SurfaceType;
+        gs.IsRound = grindSurface.IsRound;
+        gs.IsCoping = grindSurface.IsCoping;
 
         gs.transform.SetParent(grindSurface.transform);
         gs.transform.localPosition = Vector3.zero;
 
-        Undo.RegisterCreatedObjectUndo(gs, "Created GrindSpline");
-
-        var spline = gs.GetComponent<GrindSpline>();
+        Undo.RegisterCreatedObjectUndo(gs.gameObject, "Created GrindSpline");
 
         Undo.RecordObject(grindSurface, "Added GrindSpline");
 
-        grindSurface.Splines.Add(spline);
+        grindSurface.Splines.Add(gs);
         
-        return spline;
+        return gs;
     }
 
     private GrindSpline activeSpline;
@@ -197,15 +233,19 @@ public class GrindSurfaceEditor : Editor
 
             if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Space)
             {
+                // destroy if invalid
+
                 if (activeSpline != null && activeSpline.transform.childCount < 2)
                 {
+                    foreach (var c in activeSpline.GeneratedColliders)
+                        DestroyImmediate(c.gameObject);
+
                     DestroyImmediate(activeSpline.gameObject);
+                    
                     grindSurface.Splines.Remove(activeSpline);
                 }
-
+                
                 activeSpline = null;
-
-                grindSurface.GenerateColliders();
 
                 Repaint();
             }
@@ -216,12 +256,13 @@ public class GrindSurfaceEditor : Editor
 
                 if (activeSpline != null)
                 {
+                    foreach (var c in activeSpline.GeneratedColliders)
+                        DestroyImmediate(c.gameObject);
+
                     DestroyImmediate(activeSpline.gameObject);
                     grindSurface.Splines.Remove(activeSpline);
                     activeSpline = null;
                 }
-
-                grindSurface.GenerateColliders();
 
                 Repaint();
             }

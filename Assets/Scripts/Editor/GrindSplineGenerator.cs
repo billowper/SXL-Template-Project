@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 public static class GrindSplineGenerator
 {
     private static List<Vector3> vertices = new List<Vector3>();
+    private static List<int> vertexScores = new List<int>();
     private static List<Vector3> endPoints = new List<Vector3>();
     private static List<Vector3> searchList = new List<Vector3>();
     private static List<Vector3> blockedPoints = new List<Vector3>();
@@ -17,28 +18,33 @@ public static class GrindSplineGenerator
     public static float MaxHorizontalAngle = 15f;
     public static float MaxSlope = 60f;
 
-    public static void Generate(GrindSurface surface)
+    public static void Generate(GrindSurface surface, ColliderGenerationSettings collider_generation_settings = null)
     {
         // build a list of vertexes from child objects that are valid potential grindable surfaces
         // do a set offset sphere checks to see if we have open space in any cardinal directions
 
         vertices.Clear();
+        vertexScores.Clear();
         endPoints.Clear();
         blockedPoints.Clear();
         activeSplinePoints.Clear();
 
         foreach (var m in surface.GetComponentsInChildren<MeshFilter>())
         {
-            foreach (var v in m.sharedMesh.vertices.Distinct())
+            for (int i = 0; i < m.sharedMesh.vertexCount; i++)
             {
-                var w = m.transform.TransformPoint(v);
-
-                if (IsValidPotentialVertex(w))
+                if (IsValidPotentialVertex(m, i, out var w, out var score))
                 {
-                    vertices.Add(w);
+                    if (vertices.Contains(w) == false)
+                    {
+                        vertices.Add(w);
+                        vertexScores.Add(score);
+                    }
                 }
             }
         }
+
+        vertices = vertices.OrderByDescending(v => vertexScores[vertices.IndexOf(v)]).ToList();
 
         Debug.Log($"Found {vertices.Count} potential valid vertices in child meshes.");
 
@@ -46,7 +52,7 @@ public static class GrindSplineGenerator
         // find the nearest valid vert and add that, repeat until there are no valid verts left
 
         var start = vertices[0];
-        var active_spline = CreateSpline(surface, start);
+        var active_spline = CreateSpline(surface, start, collider_generation_settings);
         var current_point = start;
         var current_index = 0;
 
@@ -109,7 +115,7 @@ public static class GrindSplineGenerator
 
                     current_index = 0;
 
-                    active_spline = CreateSpline(surface, current_point);
+                    active_spline = CreateSpline(surface, current_point, collider_generation_settings);
 
                     AddSplinePoint(active_spline, current_point);
                 }
@@ -134,7 +140,10 @@ public static class GrindSplineGenerator
             }
         }
 
-        surface.GenerateColliders();
+        foreach (var spline in surface.Splines)
+        {
+            spline.GenerateColliders();
+        }
     }
 
     private static bool TryGetNextValidPoint(GrindSurface surface, out Vector3 best, Vector3 reference_point, Vector3? previous_point)
@@ -243,7 +252,14 @@ public static class GrindSplineGenerator
                     if (both_points_in_spline)
                         continue;
 
-                    filter.Add(p);
+                    if (filter.Contains(p) == false)
+                    {
+                        filter.Add(p);
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
         }
@@ -327,22 +343,42 @@ public static class GrindSplineGenerator
         activeSplinePoints.Add(world_position);
     }
 
-    private static GrindSpline CreateSpline(GrindSurface surface, Vector3 world_position)
+    private static GrindSpline CreateSpline(GrindSurface surface, Vector3 world_position, ColliderGenerationSettings collider_generation_settings = null)
     {
-        var gs = new GameObject("GrindSpline", typeof(GrindSpline));
+        var gs = new GameObject("GrindSpline", typeof(GrindSpline)).GetComponent<GrindSpline>();
+
+        if (collider_generation_settings != null)
+        {
+            gs.ColliderGenerationSettings.ColliderType = collider_generation_settings.ColliderType;
+            gs.ColliderGenerationSettings.Radius = collider_generation_settings.Radius;
+            gs.ColliderGenerationSettings.Width = collider_generation_settings.Width;
+            gs.ColliderGenerationSettings.Depth = collider_generation_settings.Depth;
+            gs.ColliderGenerationSettings.IsEdge = collider_generation_settings.IsEdge;
+            gs.ColliderGenerationSettings.AutoDetectEdgeAlignment = collider_generation_settings.AutoDetectEdgeAlignment;
+            gs.ColliderGenerationSettings.FlipEdge = collider_generation_settings.FlipEdge;
+        }
+
+        gs.SurfaceType = surface.SurfaceType;
+        gs.IsRound = surface.IsRound;
+        gs.IsCoping = surface.IsCoping;
 
         gs.transform.position = world_position;
         gs.transform.SetParent(surface.transform);
 
-        var spline = gs.GetComponent<GrindSpline>();
-
-        surface.Splines.Add(spline);
+        surface.Splines.Add(gs);
         
-        return spline;
+        return gs;
     }
 
-    private static bool IsValidPotentialVertex(Vector3 v)
+    private static bool IsValidPotentialVertex(MeshFilter mesh_filter, int vertex_index, out Vector3 world_pos, out int score)
     {
+        var mesh = mesh_filter.sharedMesh;
+
+        var v = mesh_filter.transform.TransformPoint(mesh.vertices[vertex_index]);
+
+        world_pos = v;
+        score = 0;
+
         bool test_dir(Vector3 dir)
         {
             var t = v + (dir * PointTestOffset);
@@ -359,16 +395,20 @@ public static class GrindSplineGenerator
 
         if (test_dir(Vector3.up))
         {
-            var passed = test_dir(Vector3.forward);
+            var passed = false;
 
-            if (test_dir(Vector3.back) && passed == false)
-                passed = true;
+            for (int i = 0; i < 8; i++)
+            {
+                var t = i / 8f;
 
-            if (test_dir(Vector3.left) && passed == false)
-                passed = true;
+                var r = Quaternion.AngleAxis(t * 360f, Vector3.up) * Vector3.forward;
 
-            if (test_dir(Vector3.right) && passed == false)
-                passed = true;
+                if (test_dir(r) && passed == false)
+                {
+                    passed = true;
+                    score++;
+                }
+            }
 
             return passed;
         }

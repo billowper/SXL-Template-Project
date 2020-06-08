@@ -26,11 +26,12 @@ public static class GrindSplineUtils
             else
                 surface.DestroySplines();
 
-            surface.IsEdge = EditorPrefs.GetBool("gsDefault_IsEdge");
-            surface.AutoDetectEdgeAlignment = EditorPrefs.GetBool("gsDefault_AutoDetectEdgeAlignment");
-            surface.ColliderType = (GrindSurface.ColliderTypes) EditorPrefs.GetInt("gsDefault_ColliderType");
-
-            GrindSplineGenerator.Generate(surface);
+            GrindSplineGenerator.Generate(surface, new ColliderGenerationSettings()
+            {
+                IsEdge = EditorPrefs.GetBool("gsDefault_IsEdge"),
+                AutoDetectEdgeAlignment = EditorPrefs.GetBool("gsDefault_AutoDetectEdgeAlignment"),
+                ColliderType = (ColliderGenerationSettings.ColliderTypes) EditorPrefs.GetInt("gsDefault_ColliderType")
+            });
         }
     }
 

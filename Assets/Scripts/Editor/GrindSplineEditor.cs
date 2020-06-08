@@ -1,26 +1,98 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+[CanEditMultipleObjects]
 [CustomEditor(typeof(GrindSpline))]
 public class GrindSplineEditor : Editor
 {
+    [SerializeField] private bool showPoints;
+
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
+        serializedObject.UpdateIfRequiredOrScript();
 
-        if (GUILayout.Button("Add Point"))
+        EditorGUILayout.Space();
+
+        EditorGUI.BeginChangeCheck();
+
+        EditorGUILayout.BeginVertical(new GUIStyle("box"));
         {
-            GrindSplineUtils.AddPoint(grindSpline);
+            EditorGUILayout.LabelField("Grind Settings", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("SurfaceType"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("IsRound"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("IsCoping"));
+
+            EditorGUILayout.HelpBox("These are used by the map importer to determine what kind of grind this is", MessageType.Info, true);
+        }
+        EditorGUILayout.EndVertical();
+
+        if (targets.Length == 1)
+        {
+            EditorGUILayout.BeginVertical(new GUIStyle("box"));
+            {
+                EditorGUILayout.LabelField("Spline Tools", EditorStyles.boldLabel);
+                EditorGUILayout.BeginHorizontal();
+
+                if (GUILayout.Button("Add Point"))
+                {
+                    GrindSplineUtils.AddPoint(grindSpline);
+                }
+
+                drawPoints = GUILayout.Toggle(drawPoints, "Draw Points", new GUIStyle("button"));
+
+                EditorGUILayout.EndHorizontal();
+
+                if (GUILayout.Button("Rename Points"))
+                {
+                    foreach (Transform x in grindSpline.transform)
+                    {
+                        x.gameObject.name = $"Point ({x.GetSiblingIndex() + 1})";
+                    }
+                }
+                EditorGUI.indentLevel++;
+
+                showPoints = EditorGUILayout.Foldout(showPoints, $"Points ({grindSpline.transform.childCount})");
+                if (showPoints)
+                {
+                    foreach (Transform child in grindSpline.transform)
+                    {
+                        EditorGUILayout.ObjectField(child, typeof(Transform), true);
+                    }
+                }
+                EditorGUI.indentLevel--;
+            }
+            EditorGUILayout.EndVertical();
         }
 
-        drawPoints = GUILayout.Toggle(drawPoints, "Draw Points", new GUIStyle("button"));
-
-        if (GUILayout.Button("Rename Points"))
+        EditorGUILayout.BeginVertical(new GUIStyle("box"));
         {
-            foreach (Transform x in grindSpline.transform)
+            EditorGUILayout.LabelField("Colliders ", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderContainer"));
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderGenerationSettings"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("GeneratedColliders"), true);
+            EditorGUI.indentLevel--;
+
+            if (GUILayout.Button("Generate Colliders"))
             {
-                x.gameObject.name = $"Point ({x.GetSiblingIndex() + 1})";
+                if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
+                {
+                    foreach (var o in targets)
+                    {
+                        var t = (GrindSpline) o;
+
+                        t.GenerateColliders();
+                    }
+
+                    serializedObject.UpdateIfRequiredOrScript();
+                }
             }
+        }
+        EditorGUILayout.EndVertical();
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            serializedObject.ApplyModifiedProperties();
         }
     }
 

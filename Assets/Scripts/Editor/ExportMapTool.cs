@@ -21,6 +21,8 @@ public static class ExportMapTool
         ExportMap(null, EditorPrefs.GetBool("SXL_UseVersionNumbering", true));
     }
 
+    public static Action<Scene> OnPreExport;
+
     public static void ExportMap(string override_asset_bundle_name, bool use_version_numbering)
     {
         var scene = SceneManager.GetActiveScene();
@@ -85,6 +87,14 @@ public static class ExportMapTool
             }
 
             o.transform.SetParent(grinds_root.transform);
+
+            if (o.ColliderContainer == o.transform)
+            {
+                foreach (var c in o.GeneratedColliders)
+                {
+                    c.transform.SetParent(null);
+                }
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -14,9 +14,14 @@ public class GrindSpline : MonoBehaviour
         Metal,
     }
 
-    [FormerlySerializedAs("GrindType")] public SurfaceTypes SurfaceType;
+    public SurfaceTypes SurfaceType;
     public bool IsRound;
     public bool IsCoping;
+    public ColliderGenerationSettings ColliderGenerationSettings = new ColliderGenerationSettings();
+    public Transform ColliderContainer;
+    public List<Collider> GeneratedColliders = new List<Collider>();
+
+    private bool flipEdgeOffset;
 
 #if UNITY_EDITOR
 
@@ -29,6 +34,14 @@ public class GrindSpline : MonoBehaviour
         if (gameObject.name.Contains(proper_name) == false || IsRound == false && gameObject.name.Contains("_Round"))
         {
             gameObject.name = proper_name;
+        }
+
+        if (IsCoping && GeneratedColliders.Any(c => c.gameObject.layer != LayerMask.NameToLayer("Coping")))
+        {
+            foreach (var c in GeneratedColliders)
+            {
+                c.gameObject.layer = LayerMask.NameToLayer("Coping");
+            }
         }
     }
 
@@ -59,6 +72,121 @@ public class GrindSpline : MonoBehaviour
                 }
             }
         }
+    }
+    
+    public void GenerateColliders(ColliderGenerationSettings settings = null)
+    {
+        if (settings == null)
+            settings = ColliderGenerationSettings;
+
+        foreach (var c in GeneratedColliders.ToArray())
+        {
+            if (c != null) 
+                DestroyImmediate(c.gameObject);
+        }
+        
+        GeneratedColliders.Clear();
+
+        List<Collider> test_cols = null;
+
+        if (transform.parent != null)
+        {
+            var sibling_splines = transform.parent.GetComponentsInChildren<GrindSpline>();
+
+            test_cols = transform.parent.GetComponentsInChildren<Collider>()
+                .Where(c => sibling_splines.All(s => s.GeneratedColliders.Contains(c) == false))
+                .ToList();
+        }
+
+        if (transform.childCount < 2)
+            return;
+
+        flipEdgeOffset = ShouldFlipEdgeOffset(settings, test_cols);
+
+        for (int i = 0; i < transform.childCount - 1; i++)
+        {
+            var a = transform.GetChild(i).position;
+            var b = transform.GetChild(i + 1).position;
+            var col = CreateColliderBetweenPoints(settings, a, b);
+
+            GeneratedColliders.Add(col);
+        }
+    }
+
+    private bool ShouldFlipEdgeOffset(ColliderGenerationSettings settings, List<Collider> test_cols = null)
+    {
+        if (settings.IsEdge)
+        {
+            if (settings.AutoDetectEdgeAlignment)
+            {
+                var left = false;
+
+                var a = transform.GetChild(0).position;
+                var b = transform.GetChild(1).position;
+
+                var dir = a - b;
+                var right = Vector3.Cross(dir.normalized, Vector3.up);
+                var test_pos = a + (right * settings.Width);
+
+                if (test_cols != null)
+                {
+                    foreach (var t in test_cols)
+                    {
+                        // if this ray doesnt hit anything then the ledge is to our left
+
+                        if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false || hit.transform.gameObject.layer == LayerMask.NameToLayer("Grindable"))
+                        {
+                            left = true;
+                        }
+                    }
+                }
+                else
+                {
+                    left = true;
+                }
+
+                return left;
+            }
+            
+            return settings.FlipEdge;
+        }
+
+        return false;
+    }
+
+    private Collider CreateColliderBetweenPoints(ColliderGenerationSettings settings, Vector3 pointA, Vector3 pointB)
+    {
+        var go = new GameObject("Grind Cols")
+        {
+            layer = LayerMask.NameToLayer(IsCoping ? "Coping" : "Grindable")
+        };
+
+        go.transform.position = pointA;
+        go.transform.LookAt(pointB);
+        go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform.parent);
+        go.tag = $"Grind_{SurfaceType}";
+
+        var length = Vector3.Distance(pointA, pointB);
+
+        if (IsRound)
+        {
+            var cap = go.AddComponent<CapsuleCollider>();
+
+            cap.direction = 2;
+            cap.radius = settings.Radius;
+            cap.height = length + 2f * settings.Radius;
+            cap.center = Vector3.forward * length / 2f + Vector3.down * settings.Radius;
+        }
+        else
+        {
+            var box = go.AddComponent<BoxCollider>();
+
+            box.size = new Vector3(settings.Width, settings.Depth, length);
+            var offset = settings.IsEdge ? new Vector3(flipEdgeOffset ? (settings.Width / 2f) * -1 : settings.Width / 2f, 0, 0) : Vector3.zero;
+            box.center = offset + Vector3.forward * length / 2f + Vector3.down *settings. Depth / 2f;
+        }
+        
+        return go.GetComponent<Collider>();
     }
 
 #endif
