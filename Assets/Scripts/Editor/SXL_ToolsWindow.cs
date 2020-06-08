@@ -29,6 +29,7 @@ public class SXL_ToolsWindow : EditorWindow
     private float settings_PointTestRadius;
     private float settings_MaxHorizontalAngle;
     private float settings_MaxSlope;
+    private bool canFlipBoxCollider;
 
     private void OnEnable()
     {
@@ -51,6 +52,12 @@ public class SXL_ToolsWindow : EditorWindow
 
     private void SelectionChanged()
     {
+        canFlipBoxCollider = false;
+
+        var box_col = Selection.activeGameObject.GetComponent<BoxCollider>();
+        if (box_col != null && FindObjectsOfType<GrindSpline>().Any(s => s.GeneratedColliders.Contains(box_col)))
+            canFlipBoxCollider = true;
+
         Repaint();
     }
 
@@ -103,7 +110,7 @@ public class SXL_ToolsWindow : EditorWindow
                 if (Selection.activeGameObject != null)
                 {
                     var box_col = Selection.activeGameObject.GetComponent<BoxCollider>();
-                    if (box_col != null && box_col.transform.parent.GetComponent<GrindSurface>())
+                    if (box_col != null && canFlipBoxCollider)
                     {
                         if (GUILayout.Button("Flip Edge Collider Offset"))
                         {
