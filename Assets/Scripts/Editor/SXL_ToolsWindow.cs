@@ -17,7 +17,6 @@ public class SXL_ToolsWindow : EditorWindow
 
     private GUIStyle containerStyle;
     private bool UseVersionNumbering;
-    private bool StripComponents;
     private string OverrideAssetBundleName;
 
     [SerializeField] private bool showGenerationSettings;
@@ -64,8 +63,6 @@ public class SXL_ToolsWindow : EditorWindow
 
     private void OnGUI()
     {
-	    var scene = SceneManager.GetActiveScene();
-
         EditorGUILayout.BeginVertical(containerStyle);
         {
             EditorGUILayout.BeginVertical(new GUIStyle("box"));
@@ -75,7 +72,6 @@ public class SXL_ToolsWindow : EditorWindow
                 EditorGUI.BeginChangeCheck();
 
                 UseVersionNumbering = EditorGUILayout.Toggle(new GUIContent("Use Version Numbering", "If true, the exported AssetBundle will be appended with an incremental version number, e.g. Example Map v4"), UseVersionNumbering);
-                StripComponents = EditorGUILayout.Toggle("StripComponents", StripComponents);
                 OverrideAssetBundleName = EditorGUILayout.TextField(new GUIContent("Override Name", "Optionally override the AssetBundle name (by default we just use the scene name)"), OverrideAssetBundleName);
 
                 if (EditorGUI.EndChangeCheck())
@@ -83,18 +79,15 @@ public class SXL_ToolsWindow : EditorWindow
                     EditorPrefs.SetBool("SXL_UseVersionNumbering", UseVersionNumbering);
                 }
 
-	            if (EditorPrefs.HasKey($"{scene.name}_version"))
-	            {
-		            EditorGUILayout.LabelField($"Version Number", EditorPrefs.GetInt($"{scene.name}_version", 1).ToString());
-	            }
-
                 if (GUILayout.Button("Export Map"))
                 {
-                    ExportMapTool.ExportMap(OverrideAssetBundleName, UseVersionNumbering, StripComponents);
+                    ExportMapTool.ExportMap(OverrideAssetBundleName, UseVersionNumbering);
                 }
 
                 if (GUILayout.Button("Delete Previous Versions"))
                 {
+                    var scene = SceneManager.GetActiveScene();
+
                     if (EditorUtility.DisplayDialog("Are you sure?", $"This will delete all previously exported maps containing the name '{scene.name}'", "Yes", "Cancel"))
                     {
                         var map_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SkaterXL/Maps");
@@ -106,14 +99,6 @@ public class SXL_ToolsWindow : EditorWindow
                             File.Delete(p);
                         }
                     } 
-                }
-
-                if (GUILayout.Button("Reset Version Number"))
-                {
-	                if (EditorPrefs.HasKey($"{scene.name}_version"))
-	                {
-			            EditorPrefs.DeleteKey($"{scene.name}_version");
-	                }
                 }
             }
             EditorGUILayout.EndVertical();

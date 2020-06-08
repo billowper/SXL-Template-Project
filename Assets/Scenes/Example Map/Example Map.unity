@@ -1297,16 +1297,15 @@ MonoBehaviour:
   IsRound: 1
   IsCoping: 1
   ColliderGenerationSettings:
-    ColliderType: 1
-    Radius: 0.05
+    ColliderType: 0
+    Radius: 0.1
     Width: 0.1
     Depth: 0.05
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
   ColliderContainer: {fileID: 0}
-  GeneratedColliders:
-  - {fileID: 807030218}
+  GeneratedColliders: []
 --- !u!4 &119484049
 Transform:
   m_ObjectHideFlags: 0
@@ -4981,9 +4980,6 @@ MonoBehaviour:
   - {fileID: 614470318}
   - {fileID: 1031170284}
   - {fileID: 898693696}
-  SurfaceType: 0
-  IsRound: 0
-  IsCoping: 0
   ColliderGenerationSettings:
     ColliderType: 0
     Radius: 0.1
@@ -13298,51 +13294,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &807030217
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 807030219}
-  - component: {fileID: 807030218}
-  m_Layer: 16
-  m_Name: Grind Cols
-  m_TagString: Grind_Metal
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!136 &807030218
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 807030217}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.05
-  m_Height: 12.1
-  m_Direction: 2
-  m_Center: {x: 0, y: -0.05, z: 6}
---- !u!4 &807030219
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 807030217}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 25.5, y: 2.0315, z: 8.9924}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 40
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &821426831
 GameObject:
   m_ObjectHideFlags: 0
@@ -14245,9 +14196,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Splines:
   - {fileID: 645303651}
-  SurfaceType: 0
-  IsRound: 0
-  IsCoping: 0
   ColliderGenerationSettings:
     ColliderType: 0
     Radius: 0.1
@@ -14538,7 +14486,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh24142
+  m_Name: pb_Mesh9946
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -15196,7 +15144,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23110
+  m_Name: pb_Mesh52510
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -20415,7 +20363,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23982
+  m_Name: pb_Mesh26150
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -21268,9 +21216,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Splines:
   - {fileID: 1438547810}
-  SurfaceType: 0
-  IsRound: 0
-  IsCoping: 0
   ColliderGenerationSettings:
     ColliderType: 0
     Radius: 0.1
@@ -25691,7 +25636,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23762
+  m_Name: pb_Mesh25986
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -28696,7 +28641,7 @@ GameObject:
   - component: {fileID: 5385652297120707173}
   - component: {fileID: 5385652297120707174}
   - component: {fileID: 5385652297120707176}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Coping
   m_TagString: Grind_Metal
   m_Icon: {fileID: 0}
@@ -33920,9 +33865,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Splines:
   - {fileID: 1074234913}
-  SurfaceType: 0
-  IsRound: 0
-  IsCoping: 0
   ColliderGenerationSettings:
     ColliderType: 0
     Radius: 0.1
@@ -34606,9 +34548,6 @@ MonoBehaviour:
   - {fileID: 1234511175}
   - {fileID: 60436081}
   - {fileID: 843085593}
-  SurfaceType: 0
-  IsRound: 0
-  IsCoping: 0
   ColliderGenerationSettings:
     ColliderType: 0
     Radius: 0.1
