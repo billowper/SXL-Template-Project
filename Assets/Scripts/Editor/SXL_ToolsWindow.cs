@@ -115,7 +115,13 @@ public class SXL_ToolsWindow : EditorWindow
                 {
                     if (File.Exists(skaterXLPath))
                     {
-                        Process.Start("cmd.exe", $"c/ \"{skaterXLPath}\"");
+                        var startInfo = new ProcessStartInfo
+                        {
+                            FileName = skaterXLPath,
+                            UseShellExecute = true,
+                        };
+                        
+                        Process.Start(startInfo);
                     }
                 }
 
