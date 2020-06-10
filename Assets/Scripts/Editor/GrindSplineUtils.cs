@@ -56,7 +56,7 @@ public static class GrindSplineUtils
 
     public static void AddPoint(GrindSpline spline)
     {
-        var p = spline.transform;
+        var p = spline.PointsContainer;
         var n = p.childCount;
         var go = new GameObject($"Point ({n + 1})");
 
@@ -70,7 +70,7 @@ public static class GrindSplineUtils
 
     public static GameObject AddPoint(GrindSpline spline, Vector3 position)
     {
-        var p = spline.transform;
+        var p = spline.PointsContainer;
         var n = p.childCount;
         var go = new GameObject($"Point ({n + 1})");
 

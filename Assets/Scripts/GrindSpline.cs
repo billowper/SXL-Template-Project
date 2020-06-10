@@ -18,6 +18,7 @@ public class GrindSpline : MonoBehaviour
     public bool IsRound;
     public bool IsCoping;
     public ColliderGenerationSettings ColliderGenerationSettings = new ColliderGenerationSettings();
+    public Transform PointsContainer;
     public Transform ColliderContainer;
     public List<Collider> GeneratedColliders = new List<Collider>();
 
@@ -43,6 +44,11 @@ public class GrindSpline : MonoBehaviour
                 c.gameObject.layer = LayerMask.NameToLayer("Coping");
             }
         }
+
+        if (PointsContainer == null)
+        {
+            PointsContainer = transform;
+        }
     }
 
     private void OnDrawGizmos()
@@ -53,22 +59,25 @@ public class GrindSpline : MonoBehaviour
 
         Gizmos.color = gizmoColor;
 
-        for (int i = 0; i < transform.childCount; i++)
+        if (PointsContainer == null) 
+            return;
+
+        for (int i = 0; i < PointsContainer.childCount; i++)
         {
-            var child = transform.GetChild(i);
+            var child = PointsContainer.GetChild(i);
 
             Gizmos.DrawWireCube(child.position, Vector3.one * 0.05f);
-            
-            if (i + 1 < transform.childCount)
+
+            if (i + 1 < PointsContainer.childCount)
             {
                 if (selected)
                 {
                     Handles.color = gizmoColor;
-                    Handles.DrawAAPolyLine(5f, child.position, transform.GetChild(i + 1).position);
+                    Handles.DrawAAPolyLine(5f, child.position, PointsContainer.GetChild(i + 1).position);
                 }
                 else
                 {
-                    Gizmos.DrawLine(child.position, transform.GetChild(i + 1).position);
+                    Gizmos.DrawLine(child.position, PointsContainer.GetChild(i + 1).position);
                 }
             }
         }
@@ -98,15 +107,15 @@ public class GrindSpline : MonoBehaviour
                 .ToList();
         }
 
-        if (transform.childCount < 2)
+        if (PointsContainer.childCount < 2)
             return;
 
         flipEdgeOffset = ShouldFlipEdgeOffset(settings, test_cols);
 
-        for (int i = 0; i < transform.childCount - 1; i++)
+        for (int i = 0; i < PointsContainer.childCount - 1; i++)
         {
-            var a = transform.GetChild(i).position;
-            var b = transform.GetChild(i + 1).position;
+            var a = PointsContainer.GetChild(i).position;
+            var b = PointsContainer.GetChild(i + 1).position;
             var col = CreateColliderBetweenPoints(settings, a, b);
 
             GeneratedColliders.Add(col);
@@ -121,8 +130,8 @@ public class GrindSpline : MonoBehaviour
             {
                 var left = false;
 
-                var a = transform.GetChild(0).position;
-                var b = transform.GetChild(1).position;
+                var a = PointsContainer.GetChild(0).position;
+                var b = PointsContainer.GetChild(1).position;
 
                 var dir = a - b;
                 var right = Vector3.Cross(dir.normalized, Vector3.up);
@@ -134,7 +143,9 @@ public class GrindSpline : MonoBehaviour
                     {
                         // if this ray doesnt hit anything then the ledge is to our left
 
-                        if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false || hit.transform.gameObject.layer == LayerMask.NameToLayer("Grindable"))
+                        if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false ||
+                            hit.transform.gameObject.layer == LayerMask.NameToLayer("Grindable") || 
+                            settings.SkipExternalCollisionChecks && hit.transform.parent == transform.parent)
                         {
                             left = true;
                         }
@@ -163,7 +174,7 @@ public class GrindSpline : MonoBehaviour
 
         go.transform.position = pointA;
         go.transform.LookAt(pointB);
-        go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform.parent);
+        go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform);
         go.tag = $"Grind_{SurfaceType}";
 
         var length = Vector3.Distance(pointA, pointB);

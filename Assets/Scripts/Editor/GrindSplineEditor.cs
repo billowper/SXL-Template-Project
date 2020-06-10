@@ -44,17 +44,20 @@ public class GrindSplineEditor : Editor
 
                 if (GUILayout.Button("Rename Points"))
                 {
-                    foreach (Transform x in grindSpline.transform)
+                    foreach (Transform x in grindSpline.PointsContainer)
                     {
                         x.gameObject.name = $"Point ({x.GetSiblingIndex() + 1})";
                     }
                 }
+
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("PointsContainer"));
+
                 EditorGUI.indentLevel++;
 
-                showPoints = EditorGUILayout.Foldout(showPoints, $"Points ({grindSpline.transform.childCount})");
+                showPoints = EditorGUILayout.Foldout(showPoints, $"Points ({grindSpline.PointsContainer.childCount})");
                 if (showPoints)
                 {
-                    foreach (Transform child in grindSpline.transform)
+                    foreach (Transform child in grindSpline.PointsContainer)
                     {
                         EditorGUILayout.ObjectField(child, typeof(Transform), true);
                     }
@@ -116,9 +119,9 @@ public class GrindSplineEditor : Editor
 
             Handles.color = Color.green;
 
-            if (grindSpline.transform.childCount > 0)
+            if (grindSpline.PointsContainer.childCount > 0)
             {
-                Handles.DrawAAPolyLine(3f, grindSpline.transform.GetChild(grindSpline.transform.childCount - 1).position, nearestVert);
+                Handles.DrawAAPolyLine(3f, grindSpline.PointsContainer.GetChild(grindSpline.PointsContainer.childCount - 1).position, nearestVert);
             }
 
             var label = "Shift Click : Add Point\n" +

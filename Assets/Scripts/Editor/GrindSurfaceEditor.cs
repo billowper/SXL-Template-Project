@@ -167,6 +167,10 @@ public class GrindSurfaceEditor : Editor
         gs.SurfaceType = grindSurface.SurfaceType;
         gs.IsRound = grindSurface.IsRound;
         gs.IsCoping = grindSurface.IsCoping;
+        
+        gs.PointsContainer = new GameObject("Points").transform;
+        gs.PointsContainer.SetParent(gs.transform);
+        gs.PointsContainer.localPosition = Vector3.zero;
 
         gs.transform.SetParent(grindSurface.transform);
         gs.transform.localPosition = Vector3.zero;
@@ -197,9 +201,9 @@ public class GrindSurfaceEditor : Editor
 
             Handles.color = Color.green;
 
-            if (activeSpline != null && activeSpline.transform.childCount > 0)
+            if (activeSpline != null && activeSpline.PointsContainer.childCount > 0)
             {
-                Handles.DrawAAPolyLine(3f, activeSpline.transform.GetChild(activeSpline.transform.childCount - 1).position, nearestVert);
+                Handles.DrawAAPolyLine(3f, activeSpline.PointsContainer.GetChild(activeSpline.PointsContainer.childCount - 1).position, nearestVert);
             }
 
             var label = (activeSpline != null ? "Shift Click : Add Point\n" : "Shift + LMB : Create Grind\n") +
@@ -235,7 +239,7 @@ public class GrindSurfaceEditor : Editor
             {
                 // destroy if invalid
 
-                if (activeSpline != null && activeSpline.transform.childCount < 2)
+                if (activeSpline != null && activeSpline.PointsContainer.childCount < 2)
                 {
                     foreach (var c in activeSpline.GeneratedColliders)
                         DestroyImmediate(c.gameObject);

@@ -456,6 +456,8 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 60436082}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 2014621584}
@@ -1304,6 +1306,8 @@ MonoBehaviour:
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 119484049}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 807030218}
@@ -4992,6 +4996,7 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
   ColliderContainer: {fileID: 0}
 --- !u!1 &367769336
 GameObject:
@@ -7193,6 +7198,8 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 614470319}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 1381166668}
@@ -7252,6 +7259,8 @@ MonoBehaviour:
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 645303652}
   ColliderContainer: {fileID: 0}
   GeneratedColliders: []
 --- !u!4 &645303652
@@ -14256,6 +14265,7 @@ MonoBehaviour:
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
   ColliderContainer: {fileID: 0}
 --- !u!1 &843085592
 GameObject:
@@ -14297,6 +14307,8 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 843085594}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 466202758}
@@ -14513,6 +14525,8 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 898693697}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 400038752}
@@ -16025,6 +16039,8 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 1031170285}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 367769337}
@@ -16932,6 +16948,8 @@ MonoBehaviour:
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 1074234914}
   ColliderContainer: {fileID: 0}
   GeneratedColliders: []
 --- !u!4 &1074234914
@@ -18921,6 +18939,8 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 1234511176}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 1107023316}
@@ -19732,6 +19752,8 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 1260713878}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 1707967086}
@@ -21279,6 +21301,7 @@ MonoBehaviour:
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
   ColliderContainer: {fileID: 0}
 --- !u!1 &1409330065
 GameObject:
@@ -22048,6 +22071,8 @@ MonoBehaviour:
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 1438547811}
   ColliderContainer: {fileID: 0}
   GeneratedColliders: []
 --- !u!4 &1438547811
@@ -25316,6 +25341,8 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 1727557265}
   ColliderContainer: {fileID: 0}
   GeneratedColliders:
   - {fileID: 2075918682}
@@ -27876,6 +27903,8 @@ MonoBehaviour:
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
+  PointsContainer: {fileID: 2038287936}
   ColliderContainer: {fileID: 0}
   GeneratedColliders: []
 --- !u!4 &2038287936
@@ -33931,6 +33960,7 @@ MonoBehaviour:
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
   ColliderContainer: {fileID: 0}
 --- !u!1 &5972883288880038411
 GameObject:
@@ -34617,4 +34647,5 @@ MonoBehaviour:
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
     FlipEdge: 0
+    SkipExternalCollisionChecks: 0
   ColliderContainer: {fileID: 0}

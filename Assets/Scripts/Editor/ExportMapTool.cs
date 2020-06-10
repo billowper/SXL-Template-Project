@@ -18,12 +18,12 @@ public static class ExportMapTool
     [MenuItem("SXL/Quick Map Export")]
     public static void ExportMap()
     {
-        ExportMap(null, EditorPrefs.GetBool("SXL_UseVersionNumbering", true), true);
+        ExportMap(null, EditorPrefs.GetBool("SXL_UseVersionNumbering", true));
     }
 
     public static Action<Scene> OnPreExport;
 
-    public static void ExportMap(string override_asset_bundle_name, bool use_version_numbering, bool strip_components)
+    public static void ExportMap(string override_asset_bundle_name, bool use_version_numbering)
     {
         var scene = SceneManager.GetActiveScene();
 
@@ -31,7 +31,7 @@ public static class ExportMapTool
 
         EditorSceneManager.SaveScene(scene);
 
-        ProcessGrindsObjects(scene, strip_components);
+        ProcessGrindsObjects(scene);
 
         var bundle_name = scene.name;
 
@@ -78,7 +78,7 @@ public static class ExportMapTool
         EditorSceneManager.OpenScene(scene.path);
     }
 
-    private static void ProcessGrindsObjects(Scene scene, bool strip_components)
+    public static void ProcessGrindsObjects(Scene scene)
     {
         var grind_splines = Object.FindObjectsOfType<GrindSpline>();
         var grind_surfaces = Object.FindObjectsOfType<GrindSurface>();
@@ -95,37 +95,55 @@ public static class ExportMapTool
 
             o.transform.SetParent(grinds_root.transform);
 
-            if (o.ColliderContainer == o.transform)
+            // remove points container transform, re-parent points to the spline root
+
+            if (o.PointsContainer != o.transform)
+            {
+                var points = o.PointsContainer.GetComponentsInChildren<Transform>().Where(t => t != o.PointsContainer);
+                foreach (var p in points)
+                {
+                    p.SetParent(o.transform);
+                }
+
+                Object.DestroyImmediate(o.PointsContainer.gameObject);
+            }
+
+            // move colliders out to scene root
+
+            if (o.ColliderContainer == null)
             {
                 foreach (var c in o.GeneratedColliders)
                 {
                     c.transform.SetParent(null);
                 }
             }
+            else
+            {
+                o.ColliderContainer.SetParent(null);
+            }
         }
 
-        if (strip_components)
+        // strip components
+
+        foreach (var gs in grind_surfaces)
         {
-            foreach (var gs in grind_surfaces)
+            Object.DestroyImmediate(gs);
+        }
+
+        foreach (var gs in grind_splines)
+        {
+            Object.DestroyImmediate(gs);
+        }
+
+        var missing_scripts = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Component>().Where(c => c == null)).ToArray();
+
+        if (missing_scripts.Length > 0)
+        {
+            Debug.Log($"Found {missing_scripts.Length} missing scripts which will be removed.");
+
+            foreach (var s in missing_scripts)
             {
-                Object.DestroyImmediate(gs);
-            }
-
-            foreach (var gs in grind_splines)
-            {
-                Object.DestroyImmediate(gs);
-            }
-
-            var missing_scripts = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Component>().Where(c => c == null)).ToArray();
-
-            if (missing_scripts.Length > 0)
-            {
-                Debug.Log($"Found {missing_scripts.Length} missing scripts which will be removed.");
-
-                foreach (var s in missing_scripts)
-                {
-                    Object.DestroyImmediate(s);
-                }
+                Object.DestroyImmediate(s);
             }
         }
     }

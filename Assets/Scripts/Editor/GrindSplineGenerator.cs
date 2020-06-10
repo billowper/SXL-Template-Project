@@ -18,8 +18,12 @@ public static class GrindSplineGenerator
     public static float MaxHorizontalAngle = 15f;
     public static float MaxSlope = 60f;
 
+    private static ColliderGenerationSettings settings;
+
     public static void Generate(GrindSurface surface, ColliderGenerationSettings collider_generation_settings = null)
     {
+        settings = collider_generation_settings;
+
         // build a list of vertexes from child objects that are valid potential grindable surfaces
         // do a set offset sphere checks to see if we have open space in any cardinal directions
 
@@ -33,7 +37,7 @@ public static class GrindSplineGenerator
         {
             for (int i = 0; i < m.sharedMesh.vertexCount; i++)
             {
-                if (IsValidPotentialVertex(m, i, out var w, out var score))
+                if (IsValidPotentialVertex(surface.transform, m, i, out var w, out var score))
                 {
                     if (vertices.Contains(w) == false)
                     {
@@ -75,7 +79,7 @@ public static class GrindSplineGenerator
 
             // find nearest vert for our next spline point
 
-            var previous_point = current_index > 0 ? active_spline.transform.GetChild(current_index - 1) : null;
+            var previous_point = current_index > 0 ? active_spline.PointsContainer.GetChild(current_index - 1) : null;
 
             if (TryGetNextValidPoint(surface, out var next_point, current_point, previous_point?.position))
             {
@@ -92,7 +96,7 @@ public static class GrindSplineGenerator
 
             else
             {
-                var last = active_spline.transform.GetChild(active_spline.transform.childCount - 1).position;
+                var last = active_spline.PointsContainer.GetChild(active_spline.PointsContainer.childCount - 1).position;
 
                 if (endPoints.Contains(last) == false)
                     endPoints.Add(last);
@@ -132,7 +136,7 @@ public static class GrindSplineGenerator
 
         foreach (var s in buffer)
         {
-            if (s.transform.childCount <= 1)
+            if (s.PointsContainer.childCount <= 1)
             {
                 surface.Splines.Remove(s);
 
@@ -276,7 +280,7 @@ public static class GrindSplineGenerator
 
     private static bool ContainsPosition(this GrindSpline spline, Vector3 world_point)
     {
-        var points = spline.GetComponentsInChildren<Transform>();
+        var points = spline.PointsContainer.GetComponentsInChildren<Transform>();
         return points.Any(p => p.position == world_point);
     }
 
@@ -333,12 +337,12 @@ public static class GrindSplineGenerator
 
     private static void AddSplinePoint(GrindSpline spline, Vector3 world_position)
     {
-        var p = spline.transform;
+        var p = spline.PointsContainer;
         var n = p.childCount;
         var go = new GameObject($"Point ({n + 1})");
 
         go.transform.position = world_position;
-        go.transform.SetParent(spline.transform);
+        go.transform.SetParent(p);
 
         activeSplinePoints.Add(world_position);
     }
@@ -363,6 +367,11 @@ public static class GrindSplineGenerator
         gs.IsCoping = surface.IsCoping;
 
         gs.transform.position = world_position;
+
+        gs.PointsContainer = new GameObject("Points").transform;
+        gs.PointsContainer.SetParent(gs.transform);
+        gs.PointsContainer.localPosition = Vector3.zero;
+
         gs.transform.SetParent(surface.transform);
 
         surface.Splines.Add(gs);
@@ -370,7 +379,7 @@ public static class GrindSplineGenerator
         return gs;
     }
 
-    private static bool IsValidPotentialVertex(MeshFilter mesh_filter, int vertex_index, out Vector3 world_pos, out int score)
+    private static bool IsValidPotentialVertex(Transform root, MeshFilter mesh_filter, int vertex_index, out Vector3 world_pos, out int score)
     {
         var mesh = mesh_filter.sharedMesh;
 
@@ -383,12 +392,27 @@ public static class GrindSplineGenerator
         {
             var t = v + (dir * PointTestOffset);
 
-            if (Physics.CheckBox(t, Vector3.one * PointTestRadius))
+            if (settings != null && settings.SkipExternalCollisionChecks)
             {
-                Debug.DrawLine(v, t, Color.red, 0.2f);
-                return false;
+                var cols = Physics.OverlapBox(t, Vector3.one * PointTestRadius);
+                foreach (var c in cols)
+                {
+                    if (c.transform.IsChildOf(root))
+                    {
+                        Debug.DrawLine(v, t, Color.red, 0.2f);
+                        return false;
+                    }
+                }
             }
-            
+            else
+            {
+                if (Physics.CheckBox(t, Vector3.one * PointTestRadius))
+                {
+                    Debug.DrawLine(v, t, Color.red, 0.2f);
+                    return false;
+                }
+            }
+
             Debug.DrawLine(v, t, Color.green, 0.2f);
             return true;
         }

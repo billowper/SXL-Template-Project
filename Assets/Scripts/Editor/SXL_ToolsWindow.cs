@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 
 public class SXL_ToolsWindow : EditorWindow
 {
@@ -15,12 +17,14 @@ public class SXL_ToolsWindow : EditorWindow
         window.Show();
     }
 
+    private Vector2 scroll;
     private GUIStyle containerStyle;
     private bool UseVersionNumbering;
     private bool StripComponents;
     private string OverrideAssetBundleName;
 
-    [SerializeField] private bool showGenerationSettings;
+    [SerializeField] private bool showSettings;
+    [SerializeField] private string skaterXLPath;
 
     private bool gsDefault_IsEdge;
     private bool gsDefault_AutoDetectEdgeAlignment;
@@ -42,6 +46,8 @@ public class SXL_ToolsWindow : EditorWindow
         settings_PointTestRadius = EditorPrefs.GetFloat(nameof(settings_PointTestRadius), GrindSplineGenerator.PointTestRadius);
         settings_MaxHorizontalAngle = EditorPrefs.GetFloat(nameof(settings_MaxHorizontalAngle), GrindSplineGenerator.MaxHorizontalAngle);
         settings_MaxSlope = EditorPrefs.GetFloat(nameof(settings_MaxSlope), GrindSplineGenerator.MaxSlope);
+
+        skaterXLPath = EditorPrefs.GetString("skaterXLPath");
 
         Selection.selectionChanged += SelectionChanged;
     }
@@ -66,7 +72,9 @@ public class SXL_ToolsWindow : EditorWindow
     {
 	    var scene = SceneManager.GetActiveScene();
 
-        EditorGUILayout.BeginVertical(containerStyle);
+        scroll = EditorGUILayout.BeginScrollView(scroll);
+
+        EditorGUILayout.BeginVertical(containerStyle, GUILayout.Width(position.width));
         {
             EditorGUILayout.BeginVertical(new GUIStyle("box"));
             {
@@ -75,7 +83,6 @@ public class SXL_ToolsWindow : EditorWindow
                 EditorGUI.BeginChangeCheck();
 
                 UseVersionNumbering = EditorGUILayout.Toggle(new GUIContent("Use Version Numbering", "If true, the exported AssetBundle will be appended with an incremental version number, e.g. Example Map v4"), UseVersionNumbering);
-                StripComponents = EditorGUILayout.Toggle("StripComponents", StripComponents);
                 OverrideAssetBundleName = EditorGUILayout.TextField(new GUIContent("Override Name", "Optionally override the AssetBundle name (by default we just use the scene name)"), OverrideAssetBundleName);
 
                 if (EditorGUI.EndChangeCheck())
@@ -90,14 +97,39 @@ public class SXL_ToolsWindow : EditorWindow
 
                 if (GUILayout.Button("Export Map"))
                 {
-                    ExportMapTool.ExportMap(OverrideAssetBundleName, UseVersionNumbering, StripComponents);
+                    ExportMapTool.ExportMap(OverrideAssetBundleName, UseVersionNumbering);
                 }
+
+                EditorGUILayout.BeginHorizontal();
+
+                if (GUILayout.Button("Open Maps Folder"))
+                {
+                    var map_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SkaterXL/Maps/");
+
+                    EditorUtility.RevealInFinder(map_dir);
+                }
+
+                GUI.enabled = string.IsNullOrEmpty(skaterXLPath) == false;
+
+                if (GUILayout.Button("Run Skater XL"))
+                {
+                    if (File.Exists(skaterXLPath))
+                    {
+                        Process.Start("cmd.exe", $"c/ \"{skaterXLPath}\"");
+                    }
+                }
+
+                GUI.enabled = true;
+
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
 
                 if (GUILayout.Button("Delete Previous Versions"))
                 {
                     if (EditorUtility.DisplayDialog("Are you sure?", $"This will delete all previously exported maps containing the name '{scene.name}'", "Yes", "Cancel"))
                     {
-                        var map_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SkaterXL/Maps");
+                        var map_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SkaterXL", "Maps");
                         var paths = Directory.GetFiles(map_dir).Where(p => Path.GetFileName(p).StartsWith(scene.name)).ToArray();
 
                         foreach (var p in paths)
@@ -115,15 +147,19 @@ public class SXL_ToolsWindow : EditorWindow
 			            EditorPrefs.DeleteKey($"{scene.name}_version");
 	                }
                 }
+
+                EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.BeginVertical(new GUIStyle("box"));
             {
-                EditorGUILayout.LabelField("Selected Object", Selection.activeGameObject?.name, EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("Selected Object",EditorStyles.boldLabel);
 
                 if (Selection.activeGameObject != null)
                 {
+                    EditorGUILayout.LabelField(Selection.activeGameObject.name);
+
                     var box_col = Selection.activeGameObject.GetComponent<BoxCollider>();
                     if (box_col != null && canFlipBoxCollider)
                     {
@@ -167,11 +203,27 @@ public class SXL_ToolsWindow : EditorWindow
 
             EditorGUILayout.BeginVertical(new GUIStyle("box"));
             {
-                showGenerationSettings = EditorGUILayout.Foldout(showGenerationSettings, "Grind Spline Generation (Experimental)", new GUIStyle("foldout") { fontStyle = FontStyle.Bold });
+                showSettings = EditorGUILayout.Foldout(showSettings, "Settings", new GUIStyle("foldout") { fontStyle = FontStyle.Bold });
 
-                if (showGenerationSettings)
+                if (showSettings)
                 {
-                    EditorGUI.indentLevel++;
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUI.BeginChangeCheck();
+
+                    skaterXLPath = EditorGUILayout.TextField("Skater XL Path", skaterXLPath);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        EditorPrefs.SetString("skaterXLPath", skaterXLPath);
+                    }
+                    if (GUILayout.Button("Select Path", GUILayout.Width(100)))
+                    {
+                        skaterXLPath = EditorUtility.OpenFilePanel("Select SkaterXL Path", "", "exe");
+                        EditorPrefs.SetString("skaterXLPath", skaterXLPath);
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.Space();
+
+                    EditorGUILayout.LabelField("Grind Spline Generation", EditorStyles.boldLabel);
 
                     EditorGUI.BeginChangeCheck();
 
@@ -209,12 +261,12 @@ public class SXL_ToolsWindow : EditorWindow
                         GrindSplineGenerator.MaxHorizontalAngle = settings_MaxHorizontalAngle;
                         GrindSplineGenerator.MaxSlope = settings_MaxSlope;
                     }
-
-                    EditorGUI.indentLevel--;
                 }
             }
             EditorGUILayout.EndVertical();
         }
         EditorGUILayout.EndVertical();
+
+        EditorGUILayout.EndScrollView();
     }
 }
