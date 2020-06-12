@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Generates colliders from GrindSpline components
+/// Manages multiple GrindSplines, generally on a single surface or object, e.g.a ledge
 /// </summary>
 public class GrindSurface : MonoBehaviour
 {
