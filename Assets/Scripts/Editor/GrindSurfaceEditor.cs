@@ -1,4 +1,7 @@
-﻿using UnityEditor;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Unity.EditorCoroutines.Editor;
+using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(GrindSurface))]
@@ -63,10 +66,7 @@ public class GrindSurfaceEditor : Editor
             {
                 if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
                 {
-                    foreach (var s in grindSurface.Splines)
-                    {
-                        s.GenerateColliders(grindSurface.ColliderGenerationSettings);
-                    }
+                    EditorCoroutineUtility.StartCoroutineOwnerless(GenerateSplinesColliders());
                 }
             }
 
@@ -74,10 +74,7 @@ public class GrindSurfaceEditor : Editor
             {
                 if (EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))
                 {
-                    foreach (var s in grindSurface.Splines)
-                    {
-                        s.GenerateColliders(grindSurface.ColliderGenerationSettings);
-                    }
+                    EditorCoroutineUtility.StartCoroutineOwnerless(GenerateSplinesColliders(grindSurface.ColliderGenerationSettings));
                 }
             }
 
@@ -100,7 +97,6 @@ public class GrindSurfaceEditor : Editor
             {
                 EditorGUILayout.BeginVertical(new GUIStyle("box"));
                 {
-
                     for (int i = 0; i < splines_arr.arraySize; i++)
                     {
                         var e = splines_arr.GetArrayElementAtIndex(i);
@@ -158,6 +154,23 @@ public class GrindSurfaceEditor : Editor
         {
             serializedObject.ApplyModifiedProperties();
         }
+    }
+
+    private IEnumerator GenerateSplinesColliders(ColliderGenerationSettings settings = null)
+    {
+        var original_rotation = grindSurface.transform.rotation;
+        grindSurface.transform.rotation = Quaternion.identity;
+
+        yield return null;
+
+        foreach (var s in grindSurface.Splines)
+        {
+            s.GenerateColliders(settings);
+        }
+        
+        yield return null;
+
+        grindSurface.transform.rotation = original_rotation;
     }
 
     private GrindSpline CreateSpline()

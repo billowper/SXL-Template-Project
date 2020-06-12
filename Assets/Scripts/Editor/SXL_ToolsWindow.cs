@@ -34,6 +34,8 @@ public class SXL_ToolsWindow : EditorWindow
     private float settings_PointTestRadius;
     private float settings_MaxHorizontalAngle;
     private float settings_MaxSlope;
+    private bool settings_SkipExternalCollisionChecks;
+
     private bool canFlipBoxCollider;
 
     private void OnEnable()
@@ -46,6 +48,7 @@ public class SXL_ToolsWindow : EditorWindow
         settings_PointTestRadius = EditorPrefs.GetFloat(nameof(settings_PointTestRadius), GrindSplineGenerator.PointTestRadius);
         settings_MaxHorizontalAngle = EditorPrefs.GetFloat(nameof(settings_MaxHorizontalAngle), GrindSplineGenerator.MaxHorizontalAngle);
         settings_MaxSlope = EditorPrefs.GetFloat(nameof(settings_MaxSlope), GrindSplineGenerator.MaxSlope);
+        settings_SkipExternalCollisionChecks = EditorPrefs.GetBool(nameof(settings_SkipExternalCollisionChecks), GrindSplineGenerator.SkipExternalCollisionChecks);
 
         skaterXLPath = EditorPrefs.GetString("skaterXLPath");
 
@@ -254,6 +257,7 @@ public class SXL_ToolsWindow : EditorWindow
                     settings_PointTestRadius = EditorGUILayout.FloatField("PointTestRadius", settings_PointTestRadius);
                     settings_MaxHorizontalAngle = EditorGUILayout.FloatField("MaxHorizontalAngle", settings_MaxHorizontalAngle);
                     settings_MaxSlope = EditorGUILayout.FloatField("MaxSlope", settings_MaxSlope);
+                    settings_SkipExternalCollisionChecks = EditorGUILayout.Toggle("SkipExternalCollisionChecks", settings_SkipExternalCollisionChecks);
 
                     if (EditorGUI.EndChangeCheck())
                     {

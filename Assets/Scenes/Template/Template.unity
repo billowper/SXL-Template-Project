@@ -327,7 +327,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1713411780}
   ColliderContainer: {fileID: 5307951}
@@ -1311,7 +1313,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1339538389}
   ColliderContainer: {fileID: 0}
@@ -1508,7 +1512,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1909238073}
   ColliderContainer: {fileID: 0}
@@ -1667,7 +1673,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   ColliderContainer: {fileID: 0}
 --- !u!64 &353253235
@@ -2321,7 +2329,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 128974114}
   ColliderContainer: {fileID: 0}
@@ -2426,7 +2436,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1770747672}
   ColliderContainer: {fileID: 0}
@@ -13750,7 +13762,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 231144072}
   ColliderContainer: {fileID: 0}
@@ -15006,7 +15020,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   ColliderContainer: {fileID: 0}
 --- !u!64 &1102706460
@@ -15340,7 +15356,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 598190464}
   ColliderContainer: {fileID: 0}
@@ -15401,7 +15419,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1992722366}
   ColliderContainer: {fileID: 0}
@@ -15492,7 +15512,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 2071814542}
   ColliderContainer: {fileID: 0}
@@ -15721,7 +15743,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1846133363}
   ColliderContainer: {fileID: 0}
@@ -15812,7 +15836,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 932898248}
   ColliderContainer: {fileID: 0}
@@ -21241,7 +21267,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1262801403}
   ColliderContainer: {fileID: 0}
@@ -21302,7 +21330,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1174321713}
   ColliderContainer: {fileID: 0}
@@ -21393,7 +21423,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 622883933}
   ColliderContainer: {fileID: 0}
@@ -21597,7 +21629,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   ColliderContainer: {fileID: 0}
 --- !u!64 &1334132378
@@ -22285,7 +22319,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 533136012}
   ColliderContainer: {fileID: 0}
@@ -23016,7 +23052,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   ColliderContainer: {fileID: 0}
 --- !u!64 &1469467537
@@ -34982,7 +35020,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1176707138}
   ColliderContainer: {fileID: 0}
@@ -35052,7 +35092,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   ColliderContainer: {fileID: 0}
 --- !u!64 &1757160939
@@ -35418,7 +35460,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 282994960}
   ColliderContainer: {fileID: 0}
@@ -35707,7 +35751,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 31838183}
   ColliderContainer: {fileID: 0}
@@ -35800,7 +35846,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1453030786}
   ColliderContainer: {fileID: 0}
@@ -41347,7 +41395,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 70860116}
   ColliderContainer: {fileID: 0}
@@ -41438,7 +41488,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 1
     AutoDetectEdgeAlignment: 1
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 603208604}
   ColliderContainer: {fileID: 0}
@@ -52481,7 +52533,9 @@ MonoBehaviour:
     Depth: 0.05
     IsEdge: 0
     AutoDetectEdgeAlignment: 0
-    SkipExternalCollisionChecks: 0
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
     FlipEdge: 0
   PointsContainer: {fileID: 1448933379}
   ColliderContainer: {fileID: 5385652297356177107}
