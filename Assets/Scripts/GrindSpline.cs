@@ -98,6 +98,7 @@ public class GrindSpline : MonoBehaviour
 
         List<Collider> test_cols = null;
 
+        /*
         if (transform.parent != null)
         {
             var sibling_splines = transform.parent.GetComponentsInChildren<GrindSpline>();
@@ -106,11 +107,12 @@ public class GrindSpline : MonoBehaviour
                 .Where(c => sibling_splines.All(s => s.GeneratedColliders.Contains(c) == false))
                 .ToList();
         }
+        */
 
         if (PointsContainer.childCount < 2)
             return;
 
-        flipEdgeOffset = ShouldFlipEdgeOffset(settings, test_cols);
+        flipEdgeOffset = ShouldFlipEdgeOffset(settings);
 
         for (int i = 0; i < PointsContainer.childCount - 1; i++)
         {
@@ -122,7 +124,7 @@ public class GrindSpline : MonoBehaviour
         }
     }
 
-    private bool ShouldFlipEdgeOffset(ColliderGenerationSettings settings, List<Collider> test_cols = null)
+    private bool ShouldFlipEdgeOffset(ColliderGenerationSettings settings)
     {
         if (settings.IsEdge)
         {
@@ -137,21 +139,12 @@ public class GrindSpline : MonoBehaviour
                 var right = Vector3.Cross(dir.normalized, Vector3.up);
                 var test_pos = a + (right * settings.Width);
 
-                if (test_cols != null)
-                {
-                    foreach (var t in test_cols)
-                    {
-                        // if this ray doesnt hit anything then the ledge is to our left
-
-                        if (t.Raycast(new Ray(test_pos + Vector3.up, Vector3.down), out var hit, 1f) == false ||
-                            hit.transform.gameObject.layer == LayerMask.NameToLayer("Grindable") || 
-                            settings.SkipExternalCollisionChecks && hit.transform.parent == transform.parent)
-                        {
-                            left = true;
-                        }
-                    }
-                }
-                else
+                Debug.DrawLine(test_pos, a + right, Color.green, 1f);
+                Debug.DrawLine(test_pos, test_pos + Vector3.down, Color.cyan, 1f);
+                
+                if (Physics.SphereCast(new Ray(test_pos + Vector3.up, Vector3.down), 0.01f, out var hit, 1) == false || 
+                    hit.transform.gameObject.layer == LayerMask.NameToLayer("Grindable") || 
+                    settings.SkipExternalCollisionChecks && hit.transform.parent == transform.parent)
                 {
                     left = true;
                 }
@@ -173,7 +166,6 @@ public class GrindSpline : MonoBehaviour
         };
 
         go.transform.position = pointA;
-        go.transform.LookAt(pointB);
         go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform);
         go.tag = $"Grind_{SurfaceType}";
 
@@ -181,20 +173,32 @@ public class GrindSpline : MonoBehaviour
 
         if (IsRound)
         {
+            go.transform.LookAt(pointB);
+
             var cap = go.AddComponent<CapsuleCollider>();
 
             cap.direction = 2;
             cap.radius = settings.Radius;
             cap.height = length + 2f * settings.Radius;
-            cap.center = Vector3.forward * length / 2f + Vector3.down * settings.Radius;
+            cap.transform.localPosition -= Vector3.forward * length / 2f + Vector3.down * settings.Radius;
         }
         else
         {
             var box = go.AddComponent<BoxCollider>();
 
             box.size = new Vector3(settings.Width, settings.Depth, length);
-            var offset = settings.IsEdge ? new Vector3(flipEdgeOffset ? (settings.Width / 2f) * -1 : settings.Width / 2f, 0, 0) : Vector3.zero;
-            box.center = offset + Vector3.forward * length / 2f + Vector3.down *settings. Depth / 2f;
+
+            var inset = flipEdgeOffset ? (settings.Width / 2f) * -1 : settings.Width / 2f;
+            var offset = settings.IsEdge ? new Vector3(inset, 0, length / 2f) : Vector3.zero;
+
+            var angle = Vector3.Angle(Vector3.forward, pointA - pointB);
+            box.transform.localPosition = Quaternion.LookRotation(pointB - pointA, Vector3.up * angle) * offset;
+            box.transform.localRotation = Quaternion.Euler(0, angle, 0);
+
+            var p = box.transform.localPosition;
+            p.y = -(settings.Depth / 2f);
+
+            box.transform.localPosition = p;
         }
         
         return go.GetComponent<Collider>();
