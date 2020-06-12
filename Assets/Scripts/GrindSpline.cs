@@ -96,23 +96,9 @@ public class GrindSpline : MonoBehaviour
         
         GeneratedColliders.Clear();
 
-        List<Collider> test_cols = null;
-
-        /*
-        if (transform.parent != null)
-        {
-            var sibling_splines = transform.parent.GetComponentsInChildren<GrindSpline>();
-
-            test_cols = transform.parent.GetComponentsInChildren<Collider>()
-                .Where(c => sibling_splines.All(s => s.GeneratedColliders.Contains(c) == false))
-                .ToList();
-        }
-        */
-
         if (PointsContainer.childCount < 2)
             return;
 
-        flipEdgeOffset = ShouldFlipEdgeOffset(settings);
 
         for (int i = 0; i < PointsContainer.childCount - 1; i++)
         {
@@ -123,41 +109,7 @@ public class GrindSpline : MonoBehaviour
             GeneratedColliders.Add(col);
         }
     }
-
-    private bool ShouldFlipEdgeOffset(ColliderGenerationSettings settings)
-    {
-        if (settings.IsEdge)
-        {
-            if (settings.AutoDetectEdgeAlignment)
-            {
-                var left = false;
-
-                var a = PointsContainer.GetChild(0).position;
-                var b = PointsContainer.GetChild(1).position;
-
-                var dir = a - b;
-                var right = Vector3.Cross(dir.normalized, Vector3.up);
-                var test_pos = a + (right * settings.Width);
-
-                Debug.DrawLine(test_pos, a + right, Color.green, 1f);
-                Debug.DrawLine(test_pos, test_pos + Vector3.down, Color.cyan, 1f);
-                
-                if (Physics.SphereCast(new Ray(test_pos + Vector3.up, Vector3.down), 0.01f, out var hit, 1) == false || 
-                    hit.transform.gameObject.layer == LayerMask.NameToLayer("Grindable") || 
-                    settings.SkipExternalCollisionChecks && hit.transform.parent == transform.parent)
-                {
-                    left = true;
-                }
-
-                return left;
-            }
-            
-            return settings.FlipEdge;
-        }
-
-        return false;
-    }
-
+    
     private Collider CreateColliderBetweenPoints(ColliderGenerationSettings settings, Vector3 pointA, Vector3 pointB)
     {
         var go = new GameObject("Grind Cols")
@@ -165,7 +117,8 @@ public class GrindSpline : MonoBehaviour
             layer = LayerMask.NameToLayer(IsCoping ? "Coping" : "Grindable")
         };
 
-        go.transform.position = pointA;
+        go.transform.position = Vector3.Lerp(pointA, pointB, .5f);
+        go.transform.LookAt(pointA);
         go.transform.SetParent(ColliderContainer != null ? ColliderContainer : transform);
         go.tag = $"Grind_{SurfaceType}";
 
@@ -173,14 +126,11 @@ public class GrindSpline : MonoBehaviour
 
         if (IsRound)
         {
-            go.transform.LookAt(pointB);
-
             var cap = go.AddComponent<CapsuleCollider>();
 
             cap.direction = 2;
             cap.radius = settings.Radius;
             cap.height = length + 2f * settings.Radius;
-            cap.transform.localPosition -= Vector3.forward * length / 2f + Vector3.down * settings.Radius;
         }
         else
         {
@@ -188,20 +138,41 @@ public class GrindSpline : MonoBehaviour
 
             box.size = new Vector3(settings.Width, settings.Depth, length);
 
-            var inset = flipEdgeOffset ? (settings.Width / 2f) * -1 : settings.Width / 2f;
-            var offset = settings.IsEdge ? new Vector3(inset, 0, length / 2f) : Vector3.zero;
+            if (settings.IsEdge)
+            {
+                var inset_direction = GetInsetDirection(settings, go.transform);
+                var inset_distance = settings.Width / 2f;
 
-            var angle = Vector3.Angle(Vector3.forward, pointA - pointB);
-            box.transform.localPosition = Quaternion.LookRotation(pointB - pointA, Vector3.up * angle) * offset;
-            box.transform.localRotation = Quaternion.Euler(0, angle, 0);
-
-            var p = box.transform.localPosition;
-            p.y = -(settings.Depth / 2f);
-
-            box.transform.localPosition = p;
+                go.transform.localPosition += inset_direction * inset_distance;
+                go.transform.localPosition += go.transform.InverseTransformVector(new Vector3(0, -(settings.Depth / 2f), 0));
+            }
         }
         
         return go.GetComponent<Collider>();
+    }
+
+    private Vector3 GetInsetDirection(ColliderGenerationSettings settings, Transform collider_transform)
+    {
+        var root = collider_transform.parent;
+
+        if (root.parent != null && root.parent.GetComponent<GrindSurface>() != null)
+            root = root.parent;
+        
+        if (settings.AutoDetectEdgeAlignment)
+        {
+            var ray = new Ray(collider_transform.position + collider_transform.right * settings.Width + root.up, -root.up);
+
+            Debug.DrawRay(ray.origin, ray.direction, Color.cyan, 1f);
+
+            if (Physics.Raycast(ray, out var hit, 3f, settings.LayerMask) == false || hit.transform.IsChildOf(transform.parent))
+            {
+                return collider_transform.right;
+            }
+
+            return -collider_transform.right;
+        }
+            
+        return settings.FlipEdge ? -collider_transform.right : collider_transform.right;
     }
 
 #endif

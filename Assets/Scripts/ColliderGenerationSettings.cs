@@ -21,9 +21,9 @@ public class ColliderGenerationSettings
     [Tooltip("If true we attempt to auto-detect edge alignment for box colliders")]
     [ShowIf("IsEdge")] public bool AutoDetectEdgeAlignment;
 
-    [Tooltip("If true, we only test colliders from the child & siblings of the GrindSpline when trying to autodetect edge alignment.")]
-    [ShowIf("AutoDetectEdgeAlignment")] public bool SkipExternalCollisionChecks;
+    [ShowIf("AutoDetectEdgeAlignment")] public LayerMask LayerMask = 1;
     
     [Tooltip("If true, we flip alignment of edge colliders on generation.")]
     [ShowIf("IsEdge")] public bool FlipEdge;
+
 }

@@ -6,17 +6,18 @@ using Object = UnityEngine.Object;
 public static class GrindSplineGenerator
 {
     private static List<Vector3> vertices = new List<Vector3>();
-    private static List<int> vertexScores = new List<int>();
-    private static List<Vector3> endPoints = new List<Vector3>();
-    private static List<Vector3> searchList = new List<Vector3>();
-    private static List<Vector3> blockedPoints = new List<Vector3>();
-    private static List<Vector3> activeSplinePoints = new List<Vector3>();
-    private static List<Vector3> searchBuffer = new List<Vector3>();
+    private static readonly List<int> vertexScores = new List<int>();
+    private static readonly List<Vector3> endPoints = new List<Vector3>();
+    private static readonly List<Vector3> searchList = new List<Vector3>();
+    private static readonly List<Vector3> blockedPoints = new List<Vector3>();
+    private static readonly List<Vector3> activeSplinePoints = new List<Vector3>();
+    private static readonly List<Vector3> searchBuffer = new List<Vector3>();
 
     public static float PointTestOffset = 0.1f;
     public static float PointTestRadius = 0.05f;
     public static float MaxHorizontalAngle = 15f;
     public static float MaxSlope = 60f;
+    public static bool SkipExternalCollisionChecks = true;
 
     private static ColliderGenerationSettings settings;
 
@@ -146,7 +147,7 @@ public static class GrindSplineGenerator
 
         foreach (var spline in surface.Splines)
         {
-            spline.GenerateColliders();
+            spline.GenerateColliders(settings);
         }
     }
 
@@ -392,7 +393,7 @@ public static class GrindSplineGenerator
         {
             var t = v + (dir * PointTestOffset);
 
-            if (settings != null && settings.SkipExternalCollisionChecks)
+            if (SkipExternalCollisionChecks)
             {
                 var cols = Physics.OverlapBox(t, Vector3.one * PointTestRadius);
                 foreach (var c in cols)
