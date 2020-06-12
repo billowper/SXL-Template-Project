@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using System.IO;
 using System.Linq;
+using Unity.EditorCoroutines.Editor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,112 +28,135 @@ public static class ExportMapTool
 
     public static void ExportMap(string override_asset_bundle_name, bool use_version_numbering)
     {
-        var scene = SceneManager.GetActiveScene();
-
-        var start_time = DateTime.Now;
-
-        EditorSceneManager.SaveScene(scene);
-
-        ProcessGrindsObjects(scene);
-
-        var bundle_name = scene.name;
-
-        if (use_version_numbering)
+        IEnumerator routine()
         {
-            var version = EditorPrefs.GetInt($"{scene.name}_version", 1);
+            var scene = SceneManager.GetActiveScene();
 
-            version++;
+            var start_time = DateTime.Now;
 
-            EditorPrefs.SetInt($"{scene.name}_version", version);
+            EditorSceneManager.SaveScene(scene);
 
-            bundle_name = $"{scene.name} v{version}";
-        }
+            yield return ProcessGrindsObjects(scene);
 
-        if (string.IsNullOrEmpty(override_asset_bundle_name) == false)
-        {
-            bundle_name = override_asset_bundle_name;
-        }
+            var bundle_name = scene.name;
 
-        var build = new AssetBundleBuild
-        {
-            assetBundleName = bundle_name,
-            assetNames = new[] {scene.path}
-        };
+            if (use_version_numbering)
+            {
+                var version = EditorPrefs.GetInt($"{scene.name}_version", 1);
 
-        if (!Directory.Exists(ASSET_BUNDLES_BUILD_PATH))
-            Directory.CreateDirectory(ASSET_BUNDLES_BUILD_PATH);
+                version++;
 
-        BuildPipeline.BuildAssetBundles(ASSET_BUNDLES_BUILD_PATH, new []{ build }, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.StandaloneWindows);
+                EditorPrefs.SetInt($"{scene.name}_version", version);
 
-        var time_taken = start_time - DateTime.Now;
+                bundle_name = $"{scene.name} v{version}";
+            }
 
-        Debug.Log($"BuildAssetBundles took {time_taken:mm\\:ss}");
+            if (string.IsNullOrEmpty(override_asset_bundle_name) == false)
+            {
+                bundle_name = override_asset_bundle_name;
+            }
 
-        var map_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SkaterXL/Maps");
-        var bundle_path = Path.Combine(Application.dataPath.Replace("/Assets", "/AssetBundles"), build.assetBundleName);
-        var dest_path = Path.Combine(map_dir, build.assetBundleName);
+            var build = new AssetBundleBuild
+            {
+                assetBundleName = bundle_name,
+                assetNames = new[] {scene.path}
+            };
+
+            if (!Directory.Exists(ASSET_BUNDLES_BUILD_PATH))
+                Directory.CreateDirectory(ASSET_BUNDLES_BUILD_PATH);
+
+            BuildPipeline.BuildAssetBundles(ASSET_BUNDLES_BUILD_PATH, new []{ build }, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.StandaloneWindows);
+
+            var time_taken = start_time - DateTime.Now;
+
+            Debug.Log($"BuildAssetBundles took {time_taken:mm\\:ss}");
+
+            var map_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SkaterXL/Maps");
+            var bundle_path = Path.Combine(Application.dataPath.Replace("/Assets", "/AssetBundles"), build.assetBundleName);
+            var dest_path = Path.Combine(map_dir, build.assetBundleName);
       
-        Debug.Log($"Copying {bundle_path} to {dest_path}");
+            Debug.Log($"Copying {bundle_path} to {dest_path}");
 
-        File.Copy(bundle_path, dest_path, overwrite: true);
-        File.Delete(bundle_path);
+            File.Copy(bundle_path, dest_path, overwrite: true);
+            File.Delete(bundle_path);
 
-        EditorSceneManager.OpenScene(scene.path);
+            EditorSceneManager.OpenScene(scene.path);
+        }
+
+        EditorCoroutineUtility.StartCoroutineOwnerless(routine());
     }
 
-    public static void ProcessGrindsObjects(Scene scene)
+    [MenuItem("SXL/Test Export Process")]
+    public static void TestExportSceneProcess()
+    {
+        var scene = SceneManager.GetActiveScene();
+        
+        EditorCoroutineUtility.StartCoroutineOwnerless(ProcessGrindsObjects(scene));
+    }
+
+    public static IEnumerator ProcessGrindsObjects(Scene scene)
     {
         var grind_splines = Object.FindObjectsOfType<GrindSpline>();
         var grind_surfaces = Object.FindObjectsOfType<GrindSurface>();
 
         var grinds_root = scene.GetRootGameObjects().FirstOrDefault(o => o.name == "Grinds") ?? new GameObject("Grinds");
 
-        foreach (var o in grind_splines)
+        yield return null;
+
+        foreach (var spline in grind_splines)
         {
-            var prefab_root = PrefabUtility.GetOutermostPrefabInstanceRoot(o);
+            var prefab_root = PrefabUtility.GetOutermostPrefabInstanceRoot(spline);
             if (prefab_root != null)
             {
                 PrefabUtility.UnpackPrefabInstance(prefab_root, PrefabUnpackMode.Completely, InteractionMode.UserAction);
             }
 
-            o.transform.SetParent(grinds_root.transform);
+            spline.transform.SetParent(grinds_root.transform);
+
+            yield return null;
 
             // remove points container transform, re-parent points to the spline root
 
-            if (o.PointsContainer != o.transform)
+            if (spline.PointsContainer != spline.transform)
             {
-                var points = o.PointsContainer.GetComponentsInChildren<Transform>().Where(t => t != o.PointsContainer);
+                var points = spline.PointsContainer.GetComponentsInChildren<Transform>().Where(t => t != spline.PointsContainer);
                 foreach (var p in points)
                 {
-                    p.SetParent(o.transform);
+                    p.SetParent(spline.transform);
                 }
 
-                Object.DestroyImmediate(o.PointsContainer.gameObject);
+                Object.DestroyImmediate(spline.PointsContainer.gameObject);
+
+                yield return null;
             }
 
             // move colliders out to scene root
 
-            if (o.ColliderContainer == null)
+            if (spline.ColliderContainer == null || spline.ColliderContainer == spline.transform)
             {
-                foreach (var c in o.GeneratedColliders)
+                foreach (var c in spline.GeneratedColliders)
                 {
                     c.transform.SetParent(null);
                 }
             }
             else
             {
-                o.ColliderContainer.SetParent(null);
+                spline.ColliderContainer.SetParent(null);
             }
+
+            yield return null;
         }
+
+        yield return null;
 
         // strip components
 
-        foreach (var gs in grind_surfaces)
+        foreach (var gs in grind_splines)
         {
             Object.DestroyImmediate(gs);
         }
 
-        foreach (var gs in grind_splines)
+        foreach (var gs in grind_surfaces)
         {
             Object.DestroyImmediate(gs);
         }

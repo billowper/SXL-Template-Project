@@ -131,6 +131,9 @@ public class GrindSpline : MonoBehaviour
             cap.direction = 2;
             cap.radius = settings.Radius;
             cap.height = length + 2f * settings.Radius;
+
+            go.transform.localPosition += go.transform.InverseTransformVector(new Vector3(0, -settings.Radius, 0));
+
         }
         else
         {

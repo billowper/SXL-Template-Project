@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using Unity.EditorCoroutines.Editor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -21,134 +23,151 @@ public static class GrindSplineGenerator
 
     private static ColliderGenerationSettings settings;
 
+
+
     public static void Generate(GrindSurface surface, ColliderGenerationSettings collider_generation_settings = null)
     {
-        settings = collider_generation_settings;
-
-        // build a list of vertexes from child objects that are valid potential grindable surfaces
-        // do a set offset sphere checks to see if we have open space in any cardinal directions
-
-        vertices.Clear();
-        vertexScores.Clear();
-        endPoints.Clear();
-        blockedPoints.Clear();
-        activeSplinePoints.Clear();
-
-        foreach (var m in surface.GetComponentsInChildren<MeshFilter>())
+        IEnumerator routine()
         {
-            for (int i = 0; i < m.sharedMesh.vertexCount; i++)
+            var original_rotation = surface.transform.rotation;
+
+            surface.transform.rotation = Quaternion.identity;
+
+            yield return null;
+
+            settings = collider_generation_settings;
+
+            // build a list of vertexes from child objects that are valid potential grindable surfaces
+            // do a set offset sphere checks to see if we have open space in any cardinal directions
+
+            vertices.Clear();
+            vertexScores.Clear();
+            endPoints.Clear();
+            blockedPoints.Clear();
+            activeSplinePoints.Clear();
+
+            foreach (var m in surface.GetComponentsInChildren<MeshFilter>())
             {
-                if (IsValidPotentialVertex(surface.transform, m, i, out var w, out var score))
+                for (int i = 0; i < m.sharedMesh.vertexCount; i++)
                 {
-                    if (vertices.Contains(w) == false)
+                    if (IsValidPotentialVertex(surface.transform, m, i, out var w, out var score))
                     {
-                        vertices.Add(w);
-                        vertexScores.Add(score);
+                        if (vertices.Contains(w) == false)
+                        {
+                            vertices.Add(w);
+                            vertexScores.Add(score);
+                        }
                     }
                 }
             }
-        }
 
-        vertices = vertices.OrderByDescending(v => vertexScores[vertices.IndexOf(v)]).ToList();
+            vertices = vertices.OrderByDescending(v => vertexScores[vertices.IndexOf(v)]).ToList();
 
-        Debug.Log($"Found {vertices.Count} potential valid vertices in child meshes.");
+            Debug.Log($"Found {vertices.Count} potential valid vertices in child meshes.");
 
-        // start a grind spline by picking a valid vertex
-        // find the nearest valid vert and add that, repeat until there are no valid verts left
+            // start a grind spline by picking a valid vertex
+            // find the nearest valid vert and add that, repeat until there are no valid verts left
 
-        var start = vertices[0];
-        var active_spline = CreateSpline(surface, start, collider_generation_settings);
-        var current_point = start;
-        var current_index = 0;
+            var start = vertices[0];
+            var active_spline = CreateSpline(surface, start, collider_generation_settings);
+            var current_point = start;
+            var current_index = 0;
 
-        vertices.RemoveAt(0);
+            vertices.RemoveAt(0);
 
-        endPoints.Add(start);
+            endPoints.Add(start);
         
-        AddSplinePoint(active_spline, start);
+            AddSplinePoint(active_spline, start);
         
-        while (active_spline != null)
-        {
-            RefreshSearchList();
-
-            // if ran out of verts to use, we're done
-
-            if (searchList.Count == 0 || (searchList.Count == 1 && searchList[0] == current_point))
+            while (active_spline != null)
             {
-                break;
-            }
+                RefreshSearchList();
 
-            // find nearest vert for our next spline point
+                // if ran out of verts to use, we're done
 
-            var previous_point = current_index > 0 ? active_spline.PointsContainer.GetChild(current_index - 1) : null;
-
-            if (TryGetNextValidPoint(surface, out var next_point, current_point, previous_point?.position))
-            {
-                if (vertices.Contains(next_point))
-                    vertices.Remove(next_point);
-
-                AddSplinePoint(active_spline, next_point);
-
-                current_point = next_point;
-                current_index++;
-            }
-
-            // if we failed to find a valid next point, but still have verts left, lets create a new spline
-
-            else
-            {
-                var last = active_spline.PointsContainer.GetChild(active_spline.PointsContainer.childCount - 1).position;
-
-                if (endPoints.Contains(last) == false)
-                    endPoints.Add(last);
-                else
-                    blockedPoints.Add(last);
-
-                activeSplinePoints.Clear();
-
-                if (CanFindValidStartPoint(surface, out var pt))
+                if (searchList.Count == 0 || (searchList.Count == 1 && searchList[0] == current_point))
                 {
-                    current_point = pt;
+                    break;
+                }
 
-                    if (vertices.Contains(current_point))
-                        vertices.Remove(current_point);
+                // find nearest vert for our next spline point
 
-                    if (endPoints.Contains(current_point) == false)
-                        endPoints.Add(current_point);
+                var previous_point = current_index > 0 ? active_spline.PointsContainer.GetChild(current_index - 1) : null;
+
+                if (TryGetNextValidPoint(surface, out var next_point, current_point, previous_point?.position))
+                {
+                    if (vertices.Contains(next_point))
+                        vertices.Remove(next_point);
+
+                    AddSplinePoint(active_spline, next_point);
+
+                    current_point = next_point;
+                    current_index++;
+                }
+
+                // if we failed to find a valid next point, but still have verts left, lets create a new spline
+
+                else
+                {
+                    var last = active_spline.PointsContainer.GetChild(active_spline.PointsContainer.childCount - 1).position;
+
+                    if (endPoints.Contains(last) == false)
+                        endPoints.Add(last);
                     else
-                        blockedPoints.Add(current_point);
+                        blockedPoints.Add(last);
 
-                    current_index = 0;
+                    activeSplinePoints.Clear();
 
-                    active_spline = CreateSpline(surface, current_point, collider_generation_settings);
+                    if (CanFindValidStartPoint(surface, out var pt))
+                    {
+                        current_point = pt;
 
-                    AddSplinePoint(active_spline, current_point);
-                }
-                else
-                {
-                    active_spline = null;
+                        if (vertices.Contains(current_point))
+                            vertices.Remove(current_point);
+
+                        if (endPoints.Contains(current_point) == false)
+                            endPoints.Add(current_point);
+                        else
+                            blockedPoints.Add(current_point);
+
+                        current_index = 0;
+
+                        active_spline = CreateSpline(surface, current_point, collider_generation_settings);
+
+                        AddSplinePoint(active_spline, current_point);
+                    }
+                    else
+                    {
+                        active_spline = null;
+                    }
                 }
             }
+        
+            // remove any invalid splines lingering around for whatever reason
+
+            var buffer = surface.Splines.ToArray();
+
+            foreach (var s in buffer)
+            {
+                if (s.PointsContainer.childCount <= 1)
+                {
+                    surface.Splines.Remove(s);
+
+                    Object.DestroyImmediate(s.gameObject);
+                }
+            }
+
+            foreach (var spline in surface.Splines)
+            {
+                spline.GenerateColliders(settings);
+            }
+            
+            yield return null;
+
+            surface.transform.rotation = original_rotation;
         }
         
-        // remove any invalid splines lingering around for whatever reason
-
-        var buffer = surface.Splines.ToArray();
-
-        foreach (var s in buffer)
-        {
-            if (s.PointsContainer.childCount <= 1)
-            {
-                surface.Splines.Remove(s);
-
-                Object.DestroyImmediate(s.gameObject);
-            }
-        }
-
-        foreach (var spline in surface.Splines)
-        {
-            spline.GenerateColliders(settings);
-        }
+        EditorCoroutineUtility.StartCoroutineOwnerless(routine());
     }
 
     private static bool TryGetNextValidPoint(GrindSurface surface, out Vector3 best, Vector3 reference_point, Vector3? previous_point)
