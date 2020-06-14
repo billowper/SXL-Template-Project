@@ -54,7 +54,6 @@ public class GrindSurfaceEditor : Editor
 
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("SurfaceType"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("IsRound"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("IsCoping"));
 
             }
             EditorGUILayout.EndVertical();
@@ -179,7 +178,6 @@ public class GrindSurfaceEditor : Editor
 
         gs.SurfaceType = grindSurface.SurfaceType;
         gs.IsRound = grindSurface.IsRound;
-        gs.IsCoping = grindSurface.IsCoping;
         
         gs.PointsContainer = new GameObject("Points").transform;
         gs.PointsContainer.SetParent(gs.transform);
@@ -219,13 +217,23 @@ public class GrindSurfaceEditor : Editor
                 Handles.DrawAAPolyLine(3f, activeSpline.PointsContainer.GetChild(activeSpline.PointsContainer.childCount - 1).position, nearestVert);
             }
 
-            var label = (activeSpline != null ? "Shift Click : Add Point\n" : "Shift + LMB : Create Grind\n") +
-                        $"Space : Confirm\n" +
-                        $"Escape : {(activeSpline == null ? "Exit Drawing Mode" : "Cancel")}";
-            
-            var offset = Vector3.up * Mathf.Lerp(0.1f, 1f, Mathf.Clamp01(SceneView.currentDrawingSceneView.cameraDistance / 4));
+            Handles.BeginGUI();
+            {
+                var r = new Rect(10, SceneView.currentDrawingSceneView.camera.pixelHeight - 30 * 3 + 10, 400, 30 * 3);
 
-            Handles.Label(nearestVert + offset, label, new GUIStyle("whiteLabel") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
+                GUILayout.BeginArea(r);
+                GUILayout.BeginVertical(new GUIStyle("box"));
+                
+                var label = (activeSpline != null ? "Shift Click : Add Point\n" : "Shift + LMB : Create Grind\n") +
+                            $"Space : Confirm\n" +
+                            $"Escape : {(activeSpline == null ? "Exit Drawing Mode" : "Cancel")}";
+
+                GUILayout.Label($"<color=white>{label}</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
+                GUILayout.EndVertical();
+                GUILayout.EndArea();
+            }
+            Handles.EndGUI();
+
             Handles.CircleHandleCap(0, nearestVert, Quaternion.LookRotation(SceneView.currentDrawingSceneView.camera.transform.forward), 0.02f, EventType.Repaint);
 
             if (Event.current == null)

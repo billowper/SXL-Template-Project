@@ -20,7 +20,6 @@ public class GrindSplineEditor : Editor
             EditorGUILayout.LabelField("Grind Settings", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("SurfaceType"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("IsRound"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("IsCoping"));
 
             EditorGUILayout.HelpBox("These are used by the map importer to determine what kind of grind this is", MessageType.Info, true);
         }
@@ -124,13 +123,23 @@ public class GrindSplineEditor : Editor
                 Handles.DrawAAPolyLine(3f, grindSpline.PointsContainer.GetChild(grindSpline.PointsContainer.childCount - 1).position, nearestVert);
             }
 
-            var label = "Shift Click : Add Point\n" +
-                        $"Space : Confirm\n" +
-                        $"Escape : Cancel";
+            Handles.BeginGUI();
+            {
+                var r = new Rect(10, SceneView.currentDrawingSceneView.camera.pixelHeight - 30 * 3 + 10, 400, 30 * 3);
 
-            var offset = Vector3.up * Mathf.Lerp(0.1f, 1f, Mathf.Clamp01(SceneView.currentDrawingSceneView.cameraDistance / 4));
+                GUILayout.BeginArea(r);
+                GUILayout.BeginVertical(new GUIStyle("box"));
+                
+                var label = "Shift Click : Add Point\n" +
+                            $"Space : Confirm\n" +
+                            $"Escape : Cancel";
 
-            Handles.Label(nearestVert + offset, label, new GUIStyle("whiteLabel") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});           
+                GUILayout.Label($"<color=white>{label}</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
+                GUILayout.EndVertical();
+                GUILayout.EndArea();
+            }
+            Handles.EndGUI();
+
             Handles.CircleHandleCap(0, nearestVert, Quaternion.LookRotation(SceneView.currentDrawingSceneView.camera.transform.forward), 0.02f, EventType.Repaint);
 
             if (Event.current == null)

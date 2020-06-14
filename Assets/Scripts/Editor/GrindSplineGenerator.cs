@@ -384,7 +384,6 @@ public static class GrindSplineGenerator
 
         gs.SurfaceType = surface.SurfaceType;
         gs.IsRound = surface.IsRound;
-        gs.IsCoping = surface.IsCoping;
 
         gs.transform.position = world_position;
 

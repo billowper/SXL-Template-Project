@@ -9,7 +9,6 @@ public class GrindSurface : MonoBehaviour
     public List<GrindSpline> Splines = new List<GrindSpline>();
     public GrindSpline.SurfaceTypes SurfaceType;
     public bool IsRound;
-    public bool IsCoping;
 
     public ColliderGenerationSettings ColliderGenerationSettings = new ColliderGenerationSettings();
     public Transform ColliderContainer;

@@ -16,7 +16,6 @@ public class GrindSpline : MonoBehaviour
 
     public SurfaceTypes SurfaceType;
     public bool IsRound;
-    public bool IsCoping;
     public ColliderGenerationSettings ColliderGenerationSettings = new ColliderGenerationSettings();
     public Transform PointsContainer;
     public Transform ColliderContainer;
@@ -37,17 +36,14 @@ public class GrindSpline : MonoBehaviour
             gameObject.name = proper_name;
         }
 
-        if (IsCoping && GeneratedColliders.Any(c => c.gameObject.layer != LayerMask.NameToLayer("Coping")))
-        {
-            foreach (var c in GeneratedColliders)
-            {
-                c.gameObject.layer = LayerMask.NameToLayer("Coping");
-            }
-        }
-
         if (PointsContainer == null)
         {
             PointsContainer = transform;
+        }
+
+        if (IsRound && ColliderGenerationSettings.ColliderType == ColliderGenerationSettings.ColliderTypes.Box)
+        {
+            ColliderGenerationSettings.ColliderType = ColliderGenerationSettings.ColliderTypes.Capsule;
         }
     }
 
@@ -99,7 +95,6 @@ public class GrindSpline : MonoBehaviour
         if (PointsContainer.childCount < 2)
             return;
 
-
         for (int i = 0; i < PointsContainer.childCount - 1; i++)
         {
             var a = PointsContainer.GetChild(i).position;
@@ -114,7 +109,7 @@ public class GrindSpline : MonoBehaviour
     {
         var go = new GameObject("Grind Cols")
         {
-            layer = LayerMask.NameToLayer(IsCoping ? "Coping" : "Grindable")
+            layer = LayerMask.NameToLayer("Grindable")
         };
 
         go.transform.position = Vector3.Lerp(pointA, pointB, .5f);
@@ -124,7 +119,7 @@ public class GrindSpline : MonoBehaviour
 
         var length = Vector3.Distance(pointA, pointB);
 
-        if (IsRound)
+        if (settings.ColliderType == ColliderGenerationSettings.ColliderTypes.Capsule)
         {
             var cap = go.AddComponent<CapsuleCollider>();
 
