@@ -163,55 +163,6 @@ public class SXL_ToolsWindow : EditorWindow
 
             EditorGUILayout.BeginVertical(new GUIStyle("box"));
             {
-                EditorGUILayout.LabelField("Selected Object",EditorStyles.boldLabel);
-
-                if (Selection.activeGameObject != null)
-                {
-                    EditorGUILayout.LabelField(Selection.activeGameObject.name);
-
-                    var box_col = Selection.activeGameObject.GetComponent<BoxCollider>();
-                    if (box_col != null && canFlipBoxCollider)
-                    {
-                        if (GUILayout.Button("Flip Edge Collider Offset"))
-                        {
-                            var c = box_col.center;
-
-                            c.x = c.x * -1f;
-
-                            box_col.center = c;
-                        }
-                    }
-                    else
-                    {
-
-                        var surface = Selection.activeGameObject.GetComponent<GrindSurface>() ?? Selection.activeGameObject.transform.GetComponentInParent<GrindSurface>();
-                        if (surface == null)
-                        {
-                            EditorGUILayout.LabelField($"<i>No GrindSurface found</i>", new GUIStyle("label") {richText = true});
-
-                            if (GUILayout.Button("Generate Grind Surface"))
-                            {
-                                surface = Selection.activeGameObject.AddComponent<GrindSurface>();
-
-                                GrindSplineGenerator.Generate(surface, new ColliderGenerationSettings()
-                                {
-                                    IsEdge = gsDefault_IsEdge,
-                                    AutoDetectEdgeAlignment = gsDefault_AutoDetectEdgeAlignment,
-                                    ColliderType = gsDefault_ColliderType
-                                });
-                            }
-                        }
-                        else
-                        {
-                            EditorGUILayout.LabelField($"GrindSurface found!", new GUIStyle("label") {richText = true});
-                        }
-                    }
-                }
-            }
-            EditorGUILayout.EndVertical();
-
-            EditorGUILayout.BeginVertical(new GUIStyle("box"));
-            {
                 showSettings = EditorGUILayout.Foldout(showSettings, "Settings", new GUIStyle("foldout") { fontStyle = FontStyle.Bold });
 
                 if (showSettings)
