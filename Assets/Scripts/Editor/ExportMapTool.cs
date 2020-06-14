@@ -36,7 +36,7 @@ public static class ExportMapTool
 
             EditorSceneManager.SaveScene(scene);
 
-            yield return ProcessGrindsObjects(scene);
+            yield return ProcessScene(scene);
 
             var bundle_name = scene.name;
 
@@ -89,12 +89,18 @@ public static class ExportMapTool
     [MenuItem("SXL/Test Export Process")]
     public static void TestExportSceneProcess()
     {
-        var scene = SceneManager.GetActiveScene();
-        
-        EditorCoroutineUtility.StartCoroutineOwnerless(ProcessGrindsObjects(scene));
+        if (EditorUtility.DisplayDialog("Are you sure?", "Running this test will delete all GrindSurface and GrindSpline scripts in your scene, and move splines and colliders into an importer-friendly configuration. It is strictly for testing purposes, so do NOT save your scene after running it!", "Yes, I'm sure!", "No"))
+        {
+            var scene = SceneManager.GetActiveScene();
+
+            if (EditorSceneManager.SaveScene(scene))
+            {
+                EditorCoroutineUtility.StartCoroutineOwnerless(ProcessScene(scene));
+            }
+        }
     }
 
-    public static IEnumerator ProcessGrindsObjects(Scene scene)
+    public static IEnumerator ProcessScene(Scene scene)
     {
         var grind_splines = Object.FindObjectsOfType<GrindSpline>();
         var grind_surfaces = Object.FindObjectsOfType<GrindSurface>();
