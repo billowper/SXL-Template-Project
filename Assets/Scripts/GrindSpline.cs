@@ -23,9 +23,12 @@ public class GrindSpline : MonoBehaviour
 
     private bool flipEdgeOffset;
 
+    public bool DrawingActive { get; set; }
+
 #if UNITY_EDITOR
 
     private Color gizmoColor = Color.green;
+    private Color gizmoColorSelected = Color.cyan;
 
     private void OnValidate()
     {
@@ -47,13 +50,29 @@ public class GrindSpline : MonoBehaviour
         }
     }
 
+    private bool AnyChildSelected()
+    {
+        foreach (var o in Selection.gameObjects)
+        {
+            if (o.transform.IsChildOf(transform))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void OnDrawGizmos()
     {
-        var selected = Selection.gameObjects.Contains(gameObject);
+        var selected = DrawingActive || Selection.gameObjects.Contains(gameObject) || AnyChildSelected();
 
-        gizmoColor.a = selected ? 1f : 0.5f;
+        var col = selected ? gizmoColorSelected : gizmoColor;
 
-        Gizmos.color = gizmoColor;
+        col.a = selected ? 1f : 0.5f;
+
+        Gizmos.color = col;
+        Handles.color = col;
 
         if (PointsContainer == null) 
             return;
@@ -62,13 +81,12 @@ public class GrindSpline : MonoBehaviour
         {
             var child = PointsContainer.GetChild(i);
 
-            Gizmos.DrawWireCube(child.position, Vector3.one * 0.05f);
+            Handles.CircleHandleCap(0, child.position, Quaternion.LookRotation(SceneView.currentDrawingSceneView.camera.transform.forward), 0.02f, EventType.Repaint);
 
             if (i + 1 < PointsContainer.childCount)
             {
                 if (selected)
                 {
-                    Handles.color = gizmoColor;
                     Handles.DrawAAPolyLine(5f, child.position, PointsContainer.GetChild(i + 1).position);
                 }
                 else
@@ -160,9 +178,7 @@ public class GrindSpline : MonoBehaviour
         {
             var ray = new Ray(collider_transform.position + collider_transform.right * settings.Width + root.up, -root.up);
 
-            Debug.DrawRay(ray.origin, ray.direction, Color.cyan, 1f);
-
-            if (Physics.Raycast(ray, out var hit, 3f, settings.LayerMask) == false || hit.transform.IsChildOf(transform.parent))
+            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, settings.LayerMask) == false || hit.transform.IsChildOf(transform.parent))
             {
                 return collider_transform.right;
             }

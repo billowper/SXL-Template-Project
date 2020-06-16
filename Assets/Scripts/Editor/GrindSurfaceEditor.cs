@@ -8,7 +8,8 @@ using UnityEngine;
 public class GrindSurfaceEditor : Editor
 {
     private bool drawSplines;
-    private Vector3 nearestVert;
+    private Vector3 pointPosition;
+    private bool vertexSnap;
 
     private GrindSurface grindSurface => ((GrindSurface) target);
 
@@ -201,40 +202,14 @@ public class GrindSurfaceEditor : Editor
     {
         if (drawSplines)
         {
-            HandleUtility.AddDefaultControl(GetHashCode());
+            Tools.current = Tool.None;
 
-            var pick_new_vert = GrindSplineUtils.PickNearestVertexToCursor(out var pos, 0, grindSurface.transform);
-            
-            if (pick_new_vert)
-                nearestVert = pos;
-
-            HandleUtility.Repaint();
-
-            Handles.color = Color.green;
-
-            if (activeSpline != null && activeSpline.PointsContainer.childCount > 0)
-            {
-                Handles.DrawAAPolyLine(3f, activeSpline.PointsContainer.GetChild(activeSpline.PointsContainer.childCount - 1).position, nearestVert);
-            }
-
-            Handles.BeginGUI();
-            {
-                var r = new Rect(10, SceneView.currentDrawingSceneView.camera.pixelHeight - 30 * 3 + 10, 400, 30 * 3);
-
-                GUILayout.BeginArea(r);
-                GUILayout.BeginVertical(new GUIStyle("box"));
-                
-                var label = (activeSpline != null ? "Shift Click : Add Point\n" : "Shift + LMB : Create Grind\n") +
-                            $"Space : Confirm\n" +
-                            $"Escape : {(activeSpline == null ? "Exit Drawing Mode" : "Cancel")}";
-
-                GUILayout.Label($"<color=white>{label}</color>", new GUIStyle("label") {richText = true, fontSize = 14, fontStyle = FontStyle.Bold});
-                GUILayout.EndVertical();
-                GUILayout.EndArea();
-            }
-            Handles.EndGUI();
-
-            Handles.CircleHandleCap(0, nearestVert, Quaternion.LookRotation(SceneView.currentDrawingSceneView.camera.transform.forward), 0.02f, EventType.Repaint);
+            SplineDrawingShared.OnSceneGUI_SplineDrawingCommon(
+                editor: this, 
+                grindSpline: activeSpline, 
+                lmbLabel: (activeSpline != null ? "Shift Click : Add Point" : "Shift + LMB : Create Grind"), 
+                vertexSnap: ref vertexSnap, 
+                pointPosition: ref pointPosition);
 
             if (Event.current == null)
                 return;
@@ -244,7 +219,8 @@ public class GrindSurfaceEditor : Editor
                 if (activeSpline == null)
                 {
                     activeSpline = CreateSpline();
-                    activeSpline.transform.position = nearestVert;
+                    activeSpline.DrawingActive = true;
+                    activeSpline.transform.position = pointPosition;
 
                     Undo.RegisterCreatedObjectUndo(activeSpline.gameObject, "Create GrindSpline");
 
@@ -252,7 +228,7 @@ public class GrindSurfaceEditor : Editor
                 }
                 else
                 {
-                    GrindSplineUtils.AddPoint(activeSpline, nearestVert);
+                    GrindSplineUtils.AddPoint(activeSpline, pointPosition);
                 }
             }
 
@@ -286,6 +262,7 @@ public class GrindSurfaceEditor : Editor
 
                     DestroyImmediate(activeSpline.gameObject);
                     grindSurface.Splines.Remove(activeSpline);
+                    activeSpline.DrawingActive = false;
                     activeSpline = null;
                 }
 

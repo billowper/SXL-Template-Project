@@ -19,11 +19,12 @@ public static class GrindSplineGenerator
     public static float PointTestRadius = 0.05f;
     public static float MaxHorizontalAngle = 15f;
     public static float MaxSlope = 60f;
+    public static float MinVertexDistance = 0.05f;
     public static bool SkipExternalCollisionChecks = true;
 
+    public static bool DrawDebug;
+
     private static ColliderGenerationSettings settings;
-
-
 
     public static void Generate(GrindSurface surface, ColliderGenerationSettings collider_generation_settings = null)
     {
@@ -307,14 +308,28 @@ public static class GrindSplineGenerator
     private static void RefreshSearchList()
     {
         searchList.Clear();
-        searchList.AddRange(vertices);
-        searchList.AddRange(endPoints);
+        searchList.AddRange(vertices.Where(CheckPointDistance));
+        searchList.AddRange(endPoints.Where(CheckPointDistance));
 
         foreach (var b in blockedPoints)
             searchList.Remove(b);
         
         foreach (var p in activeSplinePoints)
             searchList.Remove(p);
+    }
+
+    private static bool CheckPointDistance(Vector3 point)
+    {
+        foreach (var p in blockedPoints)
+        {
+            var d = Vector3.Distance(point, p);
+            if (d <= MinVertexDistance)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static bool CheckMidPoint(Vector3 current, Vector3 next)
@@ -418,7 +433,9 @@ public static class GrindSplineGenerator
                 {
                     if (c.transform.IsChildOf(root))
                     {
-                        Debug.DrawLine(v, t, Color.red, 0.2f);
+                        if (DrawDebug)
+                            Debug.DrawLine(v, t, Color.red, 0.2f);
+
                         return false;
                     }
                 }
@@ -427,12 +444,16 @@ public static class GrindSplineGenerator
             {
                 if (Physics.CheckBox(t, Vector3.one * PointTestRadius))
                 {
-                    Debug.DrawLine(v, t, Color.red, 0.2f);
+                    if (DrawDebug)
+                        Debug.DrawLine(v, t, Color.red, 0.2f);
+
                     return false;
                 }
             }
 
-            Debug.DrawLine(v, t, Color.green, 0.2f);
+            if (DrawDebug)
+                Debug.DrawLine(v, t, Color.green, 0.2f);
+
             return true;
         }
 

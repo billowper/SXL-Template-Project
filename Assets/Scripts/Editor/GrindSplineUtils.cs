@@ -82,34 +82,46 @@ public static class GrindSplineUtils
         return go;
     }
 
-    public static bool PickNearestVertexToCursor(out Vector3 position, float radius = 0, Transform parent = null)
+    public static bool SnapToSurfaceAtCursor(out Vector3 position, Transform parent = null)
     {
         var mouse_pos = Event.current != null ? Event.current.mousePosition : Vector2.zero;
         mouse_pos.y = SceneView.lastActiveSceneView.camera.pixelHeight - mouse_pos.y;
         var ray = SceneView.lastActiveSceneView.camera.ScreenPointToRay(mouse_pos);
 
-        RaycastHit hit;
-
-        if (radius > 0)
-            Physics.SphereCast(ray, radius, out hit);
-        else
-            Physics.Raycast(ray, out hit);
-
-        var mesh = hit.transform?.GetComponent<MeshFilter>() ?? hit.transform?.GetComponentInParent<MeshFilter>();
-        if (mesh != null)
+        if (Physics.Raycast(ray, out var hit))
         {
-            if (parent != null)
+            position = hit.point;
+            return true;
+        }
+
+        position = Vector3.zero;
+        return false;
+    }
+
+    public static bool SnapToVertexAtCursor(out Vector3 position, Transform parent = null)
+    {
+        var mouse_pos = Event.current != null ? Event.current.mousePosition : Vector2.zero;
+        mouse_pos.y = SceneView.lastActiveSceneView.camera.pixelHeight - mouse_pos.y;
+        var ray = SceneView.lastActiveSceneView.camera.ScreenPointToRay(mouse_pos);
+
+        if (Physics.Raycast(ray, out var hit))
+        {
+            var mesh = hit.transform?.GetComponent<MeshFilter>() ?? hit.transform?.GetComponentInParent<MeshFilter>();
+            if (mesh != null)
             {
-                if (mesh.transform.IsChildOf(parent) || mesh.transform == parent)
+                if (parent != null)
+                {
+                    if (mesh.transform.IsChildOf(parent) || mesh.transform == parent)
+                    {
+                        position = GetNearestVertex(mesh, hit.point);
+                        return true;
+                    }
+                }
+                else
                 {
                     position = GetNearestVertex(mesh, hit.point);
                     return true;
                 }
-            }
-            else
-            {
-                position = GetNearestVertex(mesh, hit.point);
-                return true;
             }
         }
 
