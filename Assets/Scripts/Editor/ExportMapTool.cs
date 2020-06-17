@@ -106,11 +106,15 @@ public static class ExportMapTool
         var grind_surfaces = Object.FindObjectsOfType<GrindSurface>();
 
         var grinds_root = scene.GetRootGameObjects().FirstOrDefault(o => o.name == "Grinds") ?? new GameObject("Grinds");
-
+        
         yield return null;
 
-        foreach (var spline in grind_splines)
+        for (var i = 0; i < grind_splines.Length; i++)
         {
+            var spline = grind_splines[i];
+           
+            EditorUtility.DisplayProgressBar("Processing Scene for Export", $"{i}/{grind_splines.Length} Splines Processed", (float) i / grind_splines.Length);
+
             var prefab_root = PrefabUtility.GetOutermostPrefabInstanceRoot(spline);
             if (prefab_root != null)
             {
@@ -178,5 +182,7 @@ public static class ExportMapTool
                 Object.DestroyImmediate(s);
             }
         }
+
+        EditorUtility.ClearProgressBar();
     }
 }

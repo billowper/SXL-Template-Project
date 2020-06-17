@@ -131,8 +131,6 @@ public class GrindSurfaceEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderGenerationSettings"), true);
             EditorGUI.indentLevel--;
 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("ColliderContainer"), true);
-
             if (GUILayout.Button("Generate Splines"))
             {
                 if (grindSurface.Splines.Count == 0 || EditorUtility.DisplayDialog("Confirm", "Are you sure? This cannot be undone", "Yes", "No!"))

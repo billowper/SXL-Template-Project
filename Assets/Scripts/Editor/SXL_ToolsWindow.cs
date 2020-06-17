@@ -36,6 +36,7 @@ public class SXL_ToolsWindow : EditorWindow
     private float settings_MaxSlope;
     private float settings_MinVertexDistance;
     private bool settings_SkipExternalCollisionChecks;
+    private bool settings_AutoUpdateColliders;
 
     private void OnEnable()
     {
@@ -49,6 +50,7 @@ public class SXL_ToolsWindow : EditorWindow
         settings_MaxSlope = EditorPrefs.GetFloat(nameof(settings_MaxSlope), GrindSplineGenerator.MaxSlope);
         settings_MinVertexDistance = EditorPrefs.GetFloat(nameof(settings_MinVertexDistance), GrindSplineGenerator.MinVertexDistance);
         settings_SkipExternalCollisionChecks = EditorPrefs.GetBool(nameof(settings_SkipExternalCollisionChecks), GrindSplineGenerator.SkipExternalCollisionChecks);
+        settings_AutoUpdateColliders = EditorPrefs.GetBool(nameof(settings_AutoUpdateColliders), GrindSpline.AutoUpdateColliders);
 
         skaterXLPath = EditorPrefs.GetString("skaterXLPath");
     }
@@ -164,9 +166,19 @@ public class SXL_ToolsWindow : EditorWindow
                     }
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.Space();
-
+       
                     EditorGUILayout.LabelField("Grind Spline Generation", EditorStyles.boldLabel);
+
+                    EditorGUI.BeginChangeCheck();
+
+                    settings_AutoUpdateColliders = EditorGUILayout.Toggle("AutoUpdateColliders", settings_AutoUpdateColliders);
                     
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        GrindSpline.AutoUpdateColliders = settings_AutoUpdateColliders;
+                        EditorPrefs.SetBool(nameof(settings_AutoUpdateColliders), settings_AutoUpdateColliders);
+                    }
+                   
                     GrindSplineGenerator.DrawDebug = EditorGUILayout.Toggle("Draw Generation Debug", GrindSplineGenerator.DrawDebug);
 
                     EditorGUI.BeginChangeCheck();

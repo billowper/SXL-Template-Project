@@ -11,7 +11,6 @@ public class GrindSurface : MonoBehaviour
     public bool IsRound;
 
     public ColliderGenerationSettings ColliderGenerationSettings = new ColliderGenerationSettings();
-    public Transform ColliderContainer;
 
     private void OnValidate()
     {

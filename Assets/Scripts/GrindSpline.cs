@@ -24,6 +24,7 @@ public class GrindSpline : MonoBehaviour
     private bool flipEdgeOffset;
 
     public bool DrawingActive { get; set; }
+    public static bool AutoUpdateColliders { get; set; }
 
 #if UNITY_EDITOR
 
@@ -65,6 +66,18 @@ public class GrindSpline : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (PointsContainer != null && 
+            Selection.activeGameObject != null && 
+            Selection.activeGameObject != null && 
+            Selection.activeGameObject.transform.IsChildOf(PointsContainer))
+        {
+            if (AutoUpdateColliders && Selection.activeGameObject.transform.hasChanged)
+            {
+                GenerateColliders();
+                Selection.activeGameObject.transform.hasChanged = false;
+            }
+        }
+
         var selected = DrawingActive || Selection.gameObjects.Contains(gameObject) || AnyChildSelected();
 
         var col = selected ? gizmoColorSelected : gizmoColor;

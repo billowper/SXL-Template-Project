@@ -53,12 +53,15 @@ public class GrindSplineEditor : Editor
 
                 EditorGUI.indentLevel++;
 
-                showPoints = EditorGUILayout.Foldout(showPoints, $"Points ({grindSpline.PointsContainer.childCount})");
-                if (showPoints)
+                if (grindSpline.PointsContainer != null)
                 {
-                    foreach (Transform child in grindSpline.PointsContainer)
+                    showPoints = EditorGUILayout.Foldout(showPoints, $"Points ({grindSpline.PointsContainer.childCount})");
+                    if (showPoints)
                     {
-                        EditorGUILayout.ObjectField(child, typeof(Transform), true);
+                        foreach (Transform child in grindSpline.PointsContainer)
+                        {
+                            EditorGUILayout.ObjectField(child, typeof(Transform), true);
+                        }
                     }
                 }
                 EditorGUI.indentLevel--;
