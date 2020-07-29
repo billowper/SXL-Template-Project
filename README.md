@@ -6,6 +6,9 @@ Unity template project for Skater XL custom map creation.
 * Skater XL 1.0
 
 ## Features
+
+* All features from my [SXL-Map-Tools](https://github.com/billowper/SXL-Map-Tools)
+
 ### Export Tool
 Builds your open scene to an AssetBundle and copies the file to the Skater XL custom maps directory in My Documents, ready to play! You can also override the export name and delete previous versions in the maps directory using the tools window.
 
