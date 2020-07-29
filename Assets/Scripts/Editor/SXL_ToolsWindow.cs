@@ -84,7 +84,7 @@ public class SXL_ToolsWindow : EditorWindow
 
 				    if (GUILayout.Button("Export Map"))
 				    {
-					    ExportMapTool.ExportMap(OverrideAssetBundleName, UseVersionNumbering);
+					    ExportMapTool.ExportMap(OverrideAssetBundleName, UseVersionNumbering, runGameAfterExport);
 				    }
 
 				    using (new EditorGUILayout.HorizontalScope())
