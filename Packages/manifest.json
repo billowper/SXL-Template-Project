@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.billowper.sxl-map-tools": "https://github.com/billowper/SXL-Map-Tools.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.ads": "3.4.5",
@@ -49,5 +50,11 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
+  },
+  "lock": {
+    "com.billowper.sxl-map-tools": {
+      "revision": "HEAD",
+      "hash": "056532237788c2b1c2671bc518d8398fc189221d"
+    }
   }
 }
