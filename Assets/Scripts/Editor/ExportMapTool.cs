@@ -26,7 +26,7 @@ public static class ExportMapTool
 
     public static Action<Scene> OnPreExport;
 
-    public static void ExportMap(string override_asset_bundle_name, bool use_version_numbering)
+    public static void ExportMap(string override_asset_bundle_name, bool use_version_numbering, bool run_game_after_export = false)
     {
         IEnumerator routine()
         {
@@ -81,6 +81,11 @@ public static class ExportMapTool
             File.Delete(bundle_path);
 
             EditorSceneManager.OpenScene(scene.path);
+
+	        if (run_game_after_export)
+	        {
+		        Application.OpenURL("steam://run/962730");
+	        }
         }
 
         EditorCoroutineUtility.StartCoroutineOwnerless(routine());
