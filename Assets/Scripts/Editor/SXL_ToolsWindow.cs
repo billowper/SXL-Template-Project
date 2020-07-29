@@ -57,8 +57,10 @@ public class SXL_ToolsWindow : EditorWindow
     {
 	    var scene = SceneManager.GetActiveScene();
 
-	    using (new EditorGUILayout.ScrollViewScope(scroll))
+	    using (var sv = new EditorGUILayout.ScrollViewScope(scroll))
 	    {
+		    scroll = sv.scrollPosition;
+
 		    using (new EditorGUILayout.VerticalScope(containerStyle, GUILayout.Width(position.width)))
 		    {
 			    using (new EditorGUILayout.VerticalScope(new GUIStyle("box")))
