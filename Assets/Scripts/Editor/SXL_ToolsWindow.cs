@@ -24,7 +24,6 @@ public class SXL_ToolsWindow : EditorWindow
     private string OverrideAssetBundleName;
 
     [SerializeField] private bool showSettings;
-    [SerializeField] private string skaterXLPath;
 
     private bool gsDefault_IsEdge;
     private bool gsDefault_AutoDetectEdgeAlignment;
@@ -51,8 +50,6 @@ public class SXL_ToolsWindow : EditorWindow
         settings_MinVertexDistance = EditorPrefs.GetFloat(nameof(settings_MinVertexDistance), GrindSplineGenerator.MinVertexDistance);
         settings_SkipExternalCollisionChecks = EditorPrefs.GetBool(nameof(settings_SkipExternalCollisionChecks), GrindSplineGenerator.SkipExternalCollisionChecks);
         settings_AutoUpdateColliders = EditorPrefs.GetBool(nameof(settings_AutoUpdateColliders), GrindSpline.AutoUpdateColliders);
-
-        skaterXLPath = EditorPrefs.GetString("skaterXLPath");
     }
     
     private void OnGUI()
@@ -96,23 +93,10 @@ public class SXL_ToolsWindow : EditorWindow
                     EditorUtility.RevealInFinder(map_dir);
                 }
 
-                GUI.enabled = string.IsNullOrEmpty(skaterXLPath) == false;
-
                 if (GUILayout.Button("Run Skater XL"))
                 {
-                    if (File.Exists(skaterXLPath))
-                    {
-                        var startInfo = new ProcessStartInfo
-                        {
-                            FileName = skaterXLPath,
-                            UseShellExecute = true,
-                        };
-                        
-                        Process.Start(startInfo);
-                    }
+					Application.OpenURL("steam://run/962730");
                 }
-
-                GUI.enabled = true;
 
                 EditorGUILayout.EndHorizontal();
 
@@ -153,19 +137,6 @@ public class SXL_ToolsWindow : EditorWindow
                 {
                     EditorGUILayout.BeginHorizontal();
                     EditorGUI.BeginChangeCheck();
-
-                    skaterXLPath = EditorGUILayout.TextField("Skater XL Path", skaterXLPath);
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        EditorPrefs.SetString("skaterXLPath", skaterXLPath);
-                    }
-                    if (GUILayout.Button("Select Path", GUILayout.Width(100)))
-                    {
-                        skaterXLPath = EditorUtility.OpenFilePanel("Select SkaterXL Path", "", "exe");
-                        EditorPrefs.SetString("skaterXLPath", skaterXLPath);
-                    }
-                    EditorGUILayout.EndHorizontal();
-                    EditorGUILayout.Space();
        
                     EditorGUILayout.LabelField("Grind Spline Generation", EditorStyles.boldLabel);
 
