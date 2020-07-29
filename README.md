@@ -1,4 +1,4 @@
-# Skater XL Custom Map Template Project
+# SXL-Template-Project
 Unity template project for Skater XL custom map creation.
 
 ## Requirements
