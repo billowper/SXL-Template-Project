@@ -1,9 +1,9 @@
 # Skater XL Custom Map Template Project
-Unity template project and a collection of tools for Skater XL custom map creation.
+Unity template project for Skater XL custom map creation.
 
 ## Requirements
-* Unity 2018.4.17f1 (I use 4.23f1 and it's fine)
-* Skater XL
+* Unity 2019.3.15f1
+* Skater XL 1.0
 
 ## Features
 ### Export Tool
